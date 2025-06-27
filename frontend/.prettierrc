@@ -1,0 +1,16 @@
+{
+	"experimentalTernaries": false,
+	"tabWidth": 2,
+	"useTabs": true,
+	"semi": true,
+	"singleQuote": false,
+	"quoteProps": "consistent",
+	"trailingComma": "none",
+	"bracketSpacing": true,
+	"objectWrap": "preserve",
+	"bracketSameLine": true,
+	"arrowParens": "always",
+	"vueIndentScriptAndStyle": true,
+	"embeddedLanguageFormatting": "auto",
+	"singleAttributePerLine": false
+}
