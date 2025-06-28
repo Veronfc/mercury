@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace backend.User
+namespace backend.Models
 {
   public class User : IdentityUser
   {
     public string? DisplayName { get; set; }
     public string? AvatarUrl { get; set; }
-    public DateTimeOffset LastActive { get; set; } = DateTimeOffset.UtcNow;
+    public DateTime LastActive { get; set; }
+    public ICollection<ConversationMember> Conversations { get; } = [];
   }
 }
 
-namespace backend.User
+namespace backend.Models
 {
   public record UserInfoResDto(string Email, string DisplayName);
 }

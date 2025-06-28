@@ -1,2 +1,5 @@
 *.md
 .env
+cert
+*.pem
+*.conf

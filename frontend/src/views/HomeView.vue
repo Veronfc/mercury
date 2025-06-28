@@ -1,6 +1,5 @@
 <script setup lang="ts">
 	import { useFetch } from "@vueuse/core";
-	import { backendUrl } from "../main";
 	import { useUserStore } from "../stores/useUserStore";
 	import { useRouter } from "vue-router";
 
@@ -8,7 +7,7 @@
 	const router = useRouter();
 
 	const logOut = async () => {
-		await useFetch(`${backendUrl}/user/logout`, {
+		await useFetch("api/user/logout", {
 			credentials: "include"
 		}).get();
 

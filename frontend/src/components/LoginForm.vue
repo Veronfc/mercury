@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import { useForm, useField } from "vee-validate";
 	import { loginSchema } from "../schemas/authSchema";
-	import { backendUrl } from "../main";
 	import { useFetch } from "@vueuse/core";
 	import { useRouter } from "vue-router";
 	import { useUserStore } from "../stores/useUserStore";
@@ -13,7 +12,7 @@
 	const { value: password } = useField("password");
 
 	const { isFetching, response, error, execute } = useFetch(
-		`${backendUrl}/user/login?useCookies=true`,
+		"/api/user/login?useCookies=true",
 		{
 			credentials: "include"
 		},

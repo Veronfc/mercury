@@ -1,7 +1,6 @@
 import { useFetch } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { backendUrl } from "../main";
 
 export const useUserStore = defineStore("user", () => {
 	const isLoggedIn = ref(false);
@@ -14,7 +13,7 @@ export const useUserStore = defineStore("user", () => {
 			return;
 		}
 
-		const { response } = await useFetch(`${backendUrl}/user`, {
+		const { response } = await useFetch("/api/user", {
 			credentials: "include"
 		}).get();
 
@@ -28,7 +27,7 @@ export const useUserStore = defineStore("user", () => {
 			return;
 		}
 
-		const { response } = await useFetch(`${backendUrl}/user/info`, {
+		const { response } = await useFetch("/api/user/info", {
 			credentials: "include"
 		}).get();
 

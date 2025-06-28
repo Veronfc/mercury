@@ -2,7 +2,6 @@
 	import { useForm, useField } from "vee-validate";
 	import { registerSchema } from "../schemas/authSchema";
 	import { useFetch } from "@vueuse/core";
-	import { backendUrl } from "../main";
 	import { ref } from "vue";
 	import { useRouter } from "vue-router";
 	import { useUserStore } from "../stores/useUserStore";
@@ -16,7 +15,7 @@
 	const { value: password } = useField("password");
 
 	const { isFetching, response, error, execute } = useFetch(
-		`${backendUrl}/user/register`,
+		"/api/user/register",
 		{
 			credentials: "include"
 		},
@@ -50,7 +49,7 @@
 				router.push({ name: "home" });
 			}, 2000);
 
-			await useFetch(`${backendUrl}/user/login?useCookies=true`, {
+			await useFetch("/api/user/login?useCookies=true", {
 				credentials: "include"
 			}).post(() => ({ email: email.value, password: password.value }));
 

@@ -20,6 +20,4 @@ const router = createRouter({
 
 const pinia = createPinia();
 
-export const backendUrl = "https://localhost:7177";
-
 createApp(App).use(router).use(pinia).mount("#app");
