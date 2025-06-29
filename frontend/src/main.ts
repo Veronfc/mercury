@@ -4,13 +4,15 @@ import App from "./App.vue";
 import NotFoundView from "./views/NotFoundView.vue";
 import HomeView from "./views/HomeView.vue";
 import AuthView from "./views/AuthView.vue";
+import ConversationView from "./views/ConversationView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { createPinia } from "pinia";
 
 const routes = [
 	{ path: "/:pathMatch(.*)*", name: "404", component: NotFoundView },
 	{ path: "/", name: "home", component: HomeView },
-	{ path: "/auth", name: "auth", component: AuthView }
+	{ path: "/auth", name: "auth", component: AuthView },
+	{ path: "/conversation", name: "conversation", component: ConversationView }
 ];
 
 const router = createRouter({

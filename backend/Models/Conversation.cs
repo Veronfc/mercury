@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace backend.Models
 {
@@ -13,7 +15,7 @@ namespace backend.Models
     public User Creator { get; set; }
     public DateTime? LastMessageSentAt { get; set; }
     public string? LastMessageSnippet { get; set; }
-    public ICollection<ConversationMember> Members { get; } = [];
+    public ICollection<ConversationMember> Members { get; set; } = [];
     public ICollection<Message> Messages { get; } = [];
   }
 }
@@ -24,5 +26,17 @@ namespace backend.Models
   {
     Direct,
     Group
+  }
+}
+
+namespace backend.Models
+{
+  public record class CreateDirectConversationDto
+  {
+    [Required]
+    public string UserId { get; init; }
+
+    //[EmailAddress]
+    //public string? UserEmail { get; init; }
   }
 }

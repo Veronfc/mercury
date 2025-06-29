@@ -1,10 +1,11 @@
 import { useFetch } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import type { User } from "../types";
 
 export const useUserStore = defineStore("user", () => {
-	const isLoggedIn = ref(false);
-	const userInfo = ref();
+	const isLoggedIn = ref<boolean>();
+	const userInfo = ref<User>();
 
 	const setLoggedIn = async (loggedIn?: boolean) => {
 		if (loggedIn !== undefined) {
@@ -13,31 +14,28 @@ export const useUserStore = defineStore("user", () => {
 			return;
 		}
 
-		const { response } = await useFetch("/api/user", {
+		const { statusCode } = await useFetch("/api/user", {
 			credentials: "include"
 		}).get();
 
-		isLoggedIn.value = response.value?.status !== 401;
+		isLoggedIn.value = statusCode.value !== 401;
 	};
 
-	const setInfo = async (info?: string) => {
-		if (info !== undefined) {
+	const setInfo = async (info?: User) => {
+		if (info) {
 			userInfo.value = info;
 
 			return;
 		}
 
-		const { response } = await useFetch("/api/user/info", {
+		const { statusCode, data } = await useFetch("/api/user/info", {
 			credentials: "include"
-		}).get();
+		}).get().json();
 
-		if (response.value?.status === 401) return;
+		if (statusCode.value === 401) return;
 
-		userInfo.value = await response.value!.json();
+		userInfo.value = data.value;
 	};
-
-	setLoggedIn();
-	setInfo();
 
 	return { isLoggedIn, userInfo, setLoggedIn, setInfo };
 });

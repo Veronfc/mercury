@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using backend.Hubs;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,20 +10,26 @@ string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING"
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<BackendDbContext>(options => options.UseNpgsql(connectionString));
-builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<BackendDbContext>();
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<DatabaseContext>();
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 builder.Services.AddAuthorization();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
 app.UseAuthorization();
 app.MapGroup("/user").CustomMapIdentityApi<User>();
 app.MapControllers();
+app.MapHub<ConversationHub>("/conversation");
 
 app.Run();

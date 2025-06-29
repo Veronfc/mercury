@@ -2,9 +2,9 @@ using backend.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class BackendDbContext : IdentityDbContext<User>
+public class DatabaseContext : IdentityDbContext<User>
 {
-  public BackendDbContext(DbContextOptions<BackendDbContext> options) : base(options) { }
+  public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

@@ -9,6 +9,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@microsoft/signalr": "^8.0.7",
 		"@vee-validate/zod": "^4.15.1",
 		"@vitejs/plugin-basic-ssl": "^2.0.0",
 		"@vueuse/core": "^13.4.0",

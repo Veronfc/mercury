@@ -29,7 +29,7 @@ namespace backend.Controllers
     [Authorize]
     public async Task<ActionResult<UserInfoResDto>> Info()
     {
-      User user = await _userManager.FindByNameAsync(User.Identity.Name);
+      User user = await _userManager.GetUserAsync(User);
 
       return Ok(new UserInfoResDto(user.Email, user.DisplayName));
     }
