@@ -31,6 +31,12 @@ type Message = {
 	senderId: string;
 	content: string;
 	sentAt: string;
-}
+};
 
-export type { Conversation, ConversationType, ConversationMember, User, Message };
+export type {
+	Conversation,
+	ConversationType,
+	ConversationMember,
+	User,
+	Message
+};

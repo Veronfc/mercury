@@ -30,6 +30,6 @@ var app = builder.Build();
 app.UseAuthorization();
 app.MapGroup("/user").CustomMapIdentityApi<User>();
 app.MapControllers();
-app.MapHub<ConversationHub>("/conversation");
+app.MapHub<ConversationHub>("/hub");
 
 app.Run();

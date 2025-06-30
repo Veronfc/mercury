@@ -3,7 +3,7 @@
 	import { loginSchema } from "../schemas/authSchema";
 	import { useFetch } from "@vueuse/core";
 	import { useRouter } from "vue-router";
-	import { useUserStore } from "../stores/useUserStore";
+	import { useUserStore } from "../stores/userStore";
 
 	const { handleSubmit, errors } = useForm({
 		validationSchema: loginSchema
@@ -30,7 +30,6 @@
 		await execute(false);
 
 		if (response.value?.status === 200) {
-			userStore.setLoggedIn(true);
 			userStore.setInfo();
 			router.push({ name: "home" });
 		}

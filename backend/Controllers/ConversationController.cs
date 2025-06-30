@@ -14,7 +14,7 @@ namespace backend.Controllers
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<Conversation>> CreateConversation([FromBody] CreateDirectConversationDto body)
+    public async Task<ActionResult<Conversation>> CreateDirectConversation([FromBody] CreateDirectConversationDto body)
     {
       //ADD: code to get other user by email
       if (!ModelState.IsValid)
@@ -56,12 +56,10 @@ namespace backend.Controllers
     {
       string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-      List<Conversation> conversations = await _db.ConversationMembers
-        .Where(cm => cm.UserId == userId)
-        .Include(cm => cm.Conversation)
-        .ThenInclude(c => c.Members)
+      List<Conversation> conversations = await _db.Conversations
+        .Where(c => c.Members.Any(cm => cm.UserId == userId))
+        .Include(c => c.Members)
         .ThenInclude(cm => cm.User)
-        .Select(cm => cm.Conversation)
         .OrderByDescending(c => c.LastMessageSentAt)
         .ToListAsync();
 

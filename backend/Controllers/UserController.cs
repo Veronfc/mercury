@@ -22,7 +22,7 @@ namespace backend.Controllers
     [Authorize]
     public IActionResult LoggedIn()
     {
-      return Ok();
+      return Ok(User.Claims.Select(c => new {c.Type, c.Value}));
     }
 
     [HttpGet("info")]

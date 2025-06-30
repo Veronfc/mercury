@@ -4,7 +4,7 @@
 	import { useFetch } from "@vueuse/core";
 	import { ref } from "vue";
 	import { useRouter } from "vue-router";
-	import { useUserStore } from "../stores/useUserStore";
+	import { useUserStore } from "../stores/userStore";
 
 	const success = ref(false);
 
@@ -53,7 +53,6 @@
 				credentials: "include"
 			}).post(() => ({ email: email.value, password: password.value }));
 
-			userStore.setLoggedIn(true);
 			userStore.setInfo();
 		}
 	});

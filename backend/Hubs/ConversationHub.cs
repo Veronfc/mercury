@@ -14,7 +14,7 @@ namespace backend.Hubs
 
     public override async Task OnConnectedAsync()
     {
-      string userId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+      string userId = Context.UserIdentifier;
 
       if (userId == null) return;
 
@@ -30,7 +30,7 @@ namespace backend.Hubs
 
     public async Task SendMessage(Guid conversationId, string content)
     {
-      string userId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+      string userId = Context.UserIdentifier;
 
       if (userId == null) return;
 
