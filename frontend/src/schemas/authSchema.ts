@@ -3,7 +3,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 
 const registerSchema = toTypedSchema(
 	zod.object({
-		email: zod.string().email("Invalid email format"),
+		email: zod.string().email("Invalid email address"),
 		password: zod
 			.string()
 			.regex(
@@ -15,7 +15,7 @@ const registerSchema = toTypedSchema(
 
 const loginSchema = toTypedSchema(
 	zod.object({
-		email: zod.string().email("Invalid email format"),
+		email: zod.string().email("Invalid email address"),
 		password: zod.string() //additional validation?
 	})
 );

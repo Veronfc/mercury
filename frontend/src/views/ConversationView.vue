@@ -1,13 +1,13 @@
 <script setup lang="ts">
+	import { storeToRefs } from "pinia";
 	import ConversationList from "../components/ConversationList.vue";
 	import MessageList from "../components/MessageList.vue";
 	import { useUserStore } from "../stores/userStore";
 	import { useRouter } from "vue-router";
-	//TODO add default local.dev/conversation check to MessageList component to show an empty component
-	const { isLoggedIn } = useUserStore();
+	const { isLoggedIn } = storeToRefs(useUserStore());
 	const router = useRouter();
 
-	if (!isLoggedIn) {
+	if (!isLoggedIn.value) {
 		router.replace({ name: "auth" });
 	}
 </script>

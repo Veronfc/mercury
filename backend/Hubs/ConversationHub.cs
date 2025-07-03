@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Text.RegularExpressions;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -14,9 +12,10 @@ namespace backend.Hubs
 
     public override async Task OnConnectedAsync()
     {
-      string userId = Context.UserIdentifier;
-
-      if (userId == null) return;
+      if (Context.UserIdentifier is not string userId)
+      {
+        return;
+      }
 
       List<Guid> conversationIds = await _db.ConversationMembers.Where(cm => cm.UserId == userId).Select(cm => cm.ConversationId).ToListAsync();
 
@@ -28,11 +27,17 @@ namespace backend.Hubs
       await base.OnConnectedAsync();
     }
 
+    public async Task JoinConversation(Guid conversationId)
+    {
+      await Groups.AddToGroupAsync(Context.ConnectionId, conversationId.ToString());
+    }
+
     public async Task SendMessage(Guid conversationId, string content)
     {
-      string userId = Context.UserIdentifier;
-
-      if (userId == null) return;
+      if (Context.UserIdentifier is not string userId)
+      {
+        return;
+      }
 
       Message message = new()
       {

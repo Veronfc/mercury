@@ -11,7 +11,7 @@
 	const { value: email } = useField("email");
 	const { value: password } = useField("password");
 
-	const { isFetching, response, error, execute } = useFetch(
+	const { isFetching, statusCode, error, execute } = useFetch(
 		"/api/user/login?useCookies=true",
 		{
 			credentials: "include"
@@ -29,7 +29,7 @@
 	const logIn = handleSubmit(async () => {
 		await execute(false);
 
-		if (response.value?.status === 200) {
+		if (statusCode.value === 200) {
 			userStore.setInfo();
 			router.push({ name: "home" });
 		}

@@ -7,7 +7,7 @@ import AuthView from "./views/AuthView.vue";
 import ConversationView from "./views/ConversationView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { createPinia } from "pinia";
-import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
+import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import { useUserStore } from "./stores/userStore";
 import { connectSignalR } from "./lib/hub";
 
@@ -24,21 +24,17 @@ const router = createRouter({
 });
 
 const pinia = createPinia();
-pinia.use(piniaPluginPersistedState)
+pinia.use(piniaPluginPersistedState);
 
 const app = createApp(App);
 app.use(router);
 app.use(pinia);
 
-// await router.isReady();
-
-// await nextTick();
-
 const userStore = useUserStore();
 await userStore.setInfo();
 
 if (userStore.isLoggedIn?.valueOf) {
-	await connectSignalR()
+	await connectSignalR();
 }
 
 app.mount("#app");

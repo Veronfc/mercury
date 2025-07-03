@@ -7,23 +7,10 @@ namespace backend.Controllers
 {
   [ApiController]
   [Route("[controller]")]
-  public class UserController : ControllerBase
+  public class UserController(SignInManager<User> signInManager, UserManager<User> userManager) : ControllerBase
   {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-
-    public UserController(SignInManager<User> signInManager, UserManager<User> userManager)
-    {
-      _userManager = userManager;
-      _signInManager = signInManager;
-    }
-
-    [HttpGet]
-    [Authorize]
-    public IActionResult LoggedIn()
-    {
-      return Ok(User.Claims.Select(c => new {c.Type, c.Value}));
-    }
+    private readonly UserManager<User> _userManager = userManager;
+    private readonly SignInManager<User> _signInManager = signInManager;
 
     [HttpGet("info")]
     [Authorize]

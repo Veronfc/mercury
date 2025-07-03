@@ -3,8 +3,10 @@
 	import { useMessageStore } from "../stores/messageStore";
 	import { useRoute } from "vue-router";
 	import { computed, watch } from "vue";
+	import { useConversationStore } from "../stores/conversationStore";
 
 	const route = useRoute();
+	const { conversations } = storeToRefs(useConversationStore());
 	const messageStore = useMessageStore();
 	const { getMessages } = messageStore;
 	const { isFetching, messages } = storeToRefs(messageStore);
@@ -14,6 +16,10 @@
 	watch(
 		conversationId,
 		(id) => {
+			if (!conversations.value[id]) {
+				return;
+			}
+
 			getMessages(id);
 		},
 		{ immediate: true }

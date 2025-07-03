@@ -2,36 +2,21 @@
 	import { useFetch } from "@vueuse/core";
 	import { useUserStore } from "../stores/userStore";
 	import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
-import { onMounted } from "vue";
+	import { storeToRefs } from "pinia";
 
-	const userStore = useUserStore()
-	const {isLoggedIn, userInfo} = storeToRefs(userStore);
-	const {setInfo} = userStore
 	const router = useRouter();
+	const userStore = useUserStore();
+	const { setInfo } = userStore;
+	const { isLoggedIn, userInfo } = storeToRefs(userStore);
 
-	const {statusCode, data, execute} = useFetch("/api/user", {
-		credentials: "include"
-	}, {
-		immediate: false
-	}).get().json()
-	
 	const logOut = async () => {
 		await useFetch("api/user/logout", {
 			credentials: "include"
 		}).get();
-		
+
 		setInfo();
 		router.go(0);
 	};
-	
-	onMounted(async () => {
-		await execute()
-
-		if (statusCode.value === 200) {
-			console.log(data.value)
-		}
-	})
 </script>
 
 <template>

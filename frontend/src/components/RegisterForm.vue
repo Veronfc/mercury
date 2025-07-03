@@ -14,7 +14,7 @@
 	const { value: email } = useField("email");
 	const { value: password } = useField("password");
 
-	const { isFetching, response, error, execute } = useFetch(
+	const { isFetching, statusCode, response, error, execute } = useFetch(
 		"/api/user/register",
 		{
 			credentials: "include"
@@ -42,7 +42,7 @@
 			}
 		}
 
-		if (response.value?.status === 200) {
+		if (statusCode.value === 200) {
 			success.value = true;
 
 			setTimeout(async () => {
