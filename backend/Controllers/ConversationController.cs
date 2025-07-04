@@ -21,6 +21,7 @@ namespace backend.Controllers
     [Authorize]
     public async Task<ActionResult<Conversation>> CreateDirectConversation([FromBody] CreateDirectConversationDto body)
     {
+      //TODO add self id check
       //TODO code to get other user by email
       if (!ModelState.IsValid)
       {
@@ -35,7 +36,7 @@ namespace backend.Controllers
         return BadRequest("ID could not be determined");
       }
 
-      if (await _db.Conversations.Where(c => c.Type == ConversationType.Direct).Include(c => c.Members).SingleOrDefaultAsync(c => c.Members.Count == 2 && c.Members.Any(m => m.UserId == body.UserId) && c.Members.Any(m => m.UserId == userId)) is Conversation existingConversation)
+      if (await _db.Conversations.Where(c => c.Type == ConversationType.Direct).SingleOrDefaultAsync(c => c.Members.Count == 2 && c.Members.Any(m => m.UserId == body.UserId) && c.Members.Any(m => m.UserId == userId)) is Conversation existingConversation)
       {
         return Conflict($"Conversation with ID: {existingConversation.Id} already exists");
       };
@@ -55,6 +56,8 @@ namespace backend.Controllers
 
       await _db.Conversations.AddAsync(conversation);
       await _db.SaveChangesAsync();
+
+      //TODO add nested DTO to return conversation with members with users
 
       return Created("", conversation);
     }

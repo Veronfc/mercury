@@ -28,7 +28,7 @@
 		data,
 		execute
 	} = useFetch<Conversation>(
-		"/api/conversation",
+		"/api/conversations",
 		{
 			credentials: "include"
 		},
@@ -36,11 +36,11 @@
 			immediate: false
 		}
 	)
-		.post({ userId: userId.value })
-		.json<Conversation>();
+		.post(() => ({ userId: userId.value }))
+		.json<Conversation>()
 
 	const startConversation = handleSubmit(async () => {
-		await execute;
+		await execute(false);
 
 		if (statusCode.value !== 201)
 			errorMessage.value = await response.value?.json();
@@ -50,6 +50,27 @@
 			addConversation(data.value);
 		}
 	});
+
+	const getDate = (dateStr: string) => {
+		const date = new Date(dateStr)
+		//TODO add today and yesterday check
+		return new Intl.DateTimeFormat("en-GB", {
+			weekday: "long",
+			day: "2-digit",
+			month: "short",
+			year: "numeric"
+		}).format(date)
+	}
+
+	const getTime = (dateStr: string) => {
+		const date = new Date(dateStr);
+
+		return new Intl.DateTimeFormat("en-GB", {
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false
+		}).format(date);
+	}
 </script>
 
 <template>
@@ -60,8 +81,9 @@
 				c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
 			}}</span>
 			<span v-if="c.type === 'Group'">{{ c.name }}</span>
-			<span>{{ c.lastMessageSnippet }}</span>
-			<span>{{ c.lastMessageSentAt }}</span>
+			<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
+			<span v-if="c.lastMessageSentAt">{{ getDate(c.lastMessageSentAt) }}</span>
+			<span v-if="c.lastMessageSentAt">{{ getTime(c.lastMessageSentAt) }}</span>
 			<hr />
 		</div>
 		<div v-if="isFetchingPost">Loading...</div>

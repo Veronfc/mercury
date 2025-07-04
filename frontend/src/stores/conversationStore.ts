@@ -6,11 +6,20 @@ import { useFetch } from "@vueuse/core";
 export const useConversationStore = defineStore(
 	"conversations",
 	() => {
-		const conversations = ref<Record<string, Conversation>>({});
+		const conversations = ref<Conversation[]>([]);
 		const isFetching = ref(false);
 
+		const sortConversations = () => {
+			conversations.value.sort((a, b) => {
+				const sentAtA = a.lastMessageSentAt ? new Date(a.lastMessageSentAt).getTime() : 0;
+				const sentAtB = b.lastMessageSentAt ? new Date(b.lastMessageSentAt).getTime() : 0;
+
+				return sentAtB - sentAtA;
+			})
+		}
+
 		const getConversation = (id: string) => {
-			return conversations.value[id];
+			return conversations.value.find(c => c.id === id);
 		};
 
 		const getConversations = async () => {
@@ -28,18 +37,19 @@ export const useConversationStore = defineStore(
 			isFetching.value = false;
 
 			if (statusCode.value === 200 && data.value) {
-				conversations.value = Object.fromEntries(
-					data.value?.map((c) => [c.id, c])
-				);
+				conversations.value = data.value;
+				sortConversations();
 			}
 		};
 
 		const addConversation = (conversation: Conversation) => {
-			conversations.value[conversation.id] = conversation;
+			conversations.value.push(conversation);
 		};
 
 		const updateConversation = (updatedConversation: Conversation) => {
-			conversations.value[updatedConversation.id] = updatedConversation;
+			const index = conversations.value.findIndex(c => c.id === updatedConversation.id)
+			conversations.value[index] = updatedConversation;
+			sortConversations();
 		};
 
 		return {

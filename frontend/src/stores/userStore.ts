@@ -6,12 +6,10 @@ import type { User } from "../types";
 export const useUserStore = defineStore(
 	"user",
 	() => {
-		const isLoggedIn = ref<boolean>();
+		const isLoggedIn = ref<boolean>(false);
 		const userInfo = ref<User>();
 
 		const setInfo = async () => {
-			if (userInfo.value && isLoggedIn) return;
-
 			const { statusCode, data } = await useFetch("/api/user/info", {
 				credentials: "include"
 			})

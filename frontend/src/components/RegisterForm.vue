@@ -5,6 +5,7 @@
 	import { ref } from "vue";
 	import { useRouter } from "vue-router";
 	import { useUserStore } from "../stores/userStore";
+import { connectSignalR } from "../lib/hub";
 
 	const success = ref(false);
 
@@ -28,7 +29,7 @@
 	}));
 
 	const errorMessage = ref();
-	const userStore = useUserStore();
+	const {setInfo} = useUserStore();
 	const router = useRouter();
 
 	const register = handleSubmit(async () => {
@@ -53,7 +54,8 @@
 				credentials: "include"
 			}).post(() => ({ email: email.value, password: password.value }));
 
-			userStore.setInfo();
+			await setInfo();
+			await connectSignalR()
 		}
 	});
 </script>

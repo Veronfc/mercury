@@ -14,17 +14,20 @@
 			credentials: "include"
 		}).get();
 
-		setInfo();
+		await setInfo();
 		router.go(0);
 	};
 </script>
 
 <template>
 	<div>This is the home view</div>
-	<span>Logged in: {{ isLoggedIn }}</span>
-	<span v-if="isLoggedIn">User info: {{ userInfo }}</span>
-	<button @click="logOut">Logout</button>
+	<div>Logged in: {{ isLoggedIn }}</div>
+	<div v-if="isLoggedIn">User info: {{ userInfo }}</div>
+	<button @click="logOut" v-if="isLoggedIn">Logout</button>
+	<br>
 	<RouterLink :to="{ name: 'auth', query: { mode: 'login' } }">Auth</RouterLink>
+	<br>
+	<RouterLink :to="{name: 'conversations'}">Conversations</RouterLink>
 </template>
 
 <style scoped></style>

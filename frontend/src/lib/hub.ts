@@ -20,10 +20,10 @@ const connectSignalR = async () => {
 		addMessage(message);
 
 		const conversation = getConversation(message.conversationId);
-		conversation.lastMessageSentAt = message.sentAt;
-		conversation.lastMessageSnippet = message.content; //TODO get substring
+		conversation!.lastMessageSentAt = message.sentAt;
+		conversation!.lastMessageSnippet = message.content.substring(0, 100);
 
-		updateConversation(conversation);
+		updateConversation(conversation!);
 	});
 
 	await connection.start();
