@@ -80,15 +80,16 @@ import { RouterLink } from "vue-router";
 		<div v-else>
 			<div v-for="c in conversations">
 				<RouterLink :to="{name: 'conversations', params: { id: c.id}}">
-					<span v-if="c.type === 'Direct'">{{
-						c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
-					}}</span>
-					<span v-if="c.type === 'Group'">{{ c.name }}</span>
-					<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
-					<span v-if="c.lastMessageSentAt">{{ getDate(c.lastMessageSentAt) }}</span>
-					<span v-if="c.lastMessageSentAt">{{ getTime(c.lastMessageSentAt) }}</span>
+					<div class="conversation">
+						<span v-if="c.type === 'Direct'">{{
+							c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
+						}}</span>
+						<span v-if="c.type === 'Group'">{{ c.name }}</span>
+						<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
+						<span v-if="c.lastMessageSentAt">{{ getDate(c.lastMessageSentAt) }}</span>
+						<span v-if="c.lastMessageSentAt">{{ getTime(c.lastMessageSentAt) }}</span>
+					</div>
 				</RouterLink>
-				<hr />
 			</div>
 			<div v-if="isFetchingPost">Loading...</div>
 			<form @submit="startConversation" v-else>
@@ -109,6 +110,10 @@ import { RouterLink } from "vue-router";
 	@reference "../style.css";
 
 	.conversation-list {
-		@apply flex flex-col w-1/3 h-svh bg-blue-500;
+		@apply flex flex-col w-min h-svh bg-blue-500 p-4;
+
+		.conversation {
+			@apply border flex flex-col rounded bg-black text-white p-2;
+		}
 	}
 </style>

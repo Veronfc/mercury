@@ -13,7 +13,7 @@ namespace backend.Models
 
 namespace backend.Models
 {
-  public record UserInfoResDto(string Email, string DisplayName);
+  public record UserInfoResDto(string Email, string DisplayName, string Id);
 }
 
 namespace backend.Models

@@ -18,7 +18,7 @@ namespace backend.Controllers
     {
       User user = await _userManager.GetUserAsync(User);
 
-      return Ok(new UserInfoResDto(user.Email, user.DisplayName));
+      return Ok(new UserInfoResDto(user.Email, user.DisplayName, user.Id));
     }
 
     [HttpGet("logout")]

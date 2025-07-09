@@ -6,12 +6,14 @@
 	import { useMessageStore } from "../stores/messageStore";
 	import { useConversationStore } from "../stores/conversationStore";
 import { getSignalR } from "../lib/hub";
+import { useUserStore } from "../stores/userStore";
 	
 	const route = useRoute();
 	const { getConversation } = useConversationStore();
 	const messageStore = useMessageStore();
 	const { getMessages } = messageStore;
 	const { isFetching, messages } = storeToRefs(messageStore);
+	const { userInfo } = storeToRefs(useUserStore());
 
 	const conversationId = computed(() => route.params.id as string);
 
@@ -64,11 +66,11 @@ import { getSignalR } from "../lib/hub";
 		<div v-if="isFetching">Loading...</div>
 		<div class="messages" v-else>
 			<div v-for="m in messages[conversationId]">
-				<span>{{ m.content }}</span>
-				<span>{{ m.senderId }}</span>
-				<span>{{ getDate(m.sentAt) }}</span>
-				<span>{{ getTime(m.sentAt) }}</span>
-				<hr>
+				<div class="message" :class="m.senderId === userInfo?.id ? 'right' : ''">
+					<span>{{ m.content }}</span>
+					<span>{{ getDate(m.sentAt) }}</span>
+					<span>{{ getTime(m.sentAt) }}</span>
+				</div>
 			</div>
 		</div>
 		<div class="message-new">
@@ -84,24 +86,36 @@ import { getSignalR } from "../lib/hub";
 	@reference "../style.css";
 
 	.message-list {
-		@apply flex flex-col relative h-svh bg-amber-500;
+		@apply flex flex-col relative h-svh w-full p-4 bg-amber-500;
 
 		.messages {
-			@apply flex flex-col;
+			@apply flex flex-col gap-2 items-start w-full;
+
+			.message {
+				@apply flex flex-col border rounded w-max p-2;
+			}
+
+			.right {
+				@apply self-end bg-amber-950 text-white;
+			}
 		}
 
 		.message-new {
-			@apply p-4;
+			@apply min-w-full;
 
 			form {
-				@apply flex bottom-4 absolute;
+				@apply flex bottom-4 gap-2 absolute;
 
 				input {
 					@apply border rounded;
 				}
-	
-				svg {
-					@apply text-2xl bg-black text-white rounded cursor-pointer;
+
+				button {
+					@apply bg-black rounded p-2 cursor-pointer;
+
+					svg {
+						@apply text-2xl text-white;
+					}
 				}
 			}
 		}
