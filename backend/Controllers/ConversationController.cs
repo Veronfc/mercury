@@ -62,9 +62,9 @@ namespace backend.Controllers
       return Created("", conversation);
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<Conversation>>> GetConversations()
+    public async Task<ActionResult<IEnumerable<ConversationDto>>> GetConversations()
     {
       if (User.FindFirstValue(ClaimTypes.NameIdentifier) is not string userId) {
         return BadRequest("ID could not be determined");
@@ -77,7 +77,27 @@ namespace backend.Controllers
         .OrderByDescending(c => c.LastMessageSentAt)
         .ToListAsync();
 
-      return Ok(conversations);
+      List<ConversationDto> conversationsDto = [.. conversations.Select(c => new ConversationDto
+      (
+        c.Id,
+        c.Type,
+        c.Name,
+        c.LastMessageSentAt,
+        c.LastMessageSnippet,
+        [.. c.Members.Select(m => new ConversationMemberDto
+        (
+          m.UserId,
+          new UserDto
+          (
+            m.User.Id,
+            m.User.Email,
+            m.User.UserName,
+            m.User.DisplayName
+          )
+        ))]
+      ))];
+
+      return Ok(conversationsDto);
     }
 
     [HttpGet("{id}")]
@@ -86,7 +106,7 @@ namespace backend.Controllers
     {
       if (!Guid.TryParse(id, out Guid guid))
       {
-        return BadRequest("");
+        return BadRequest();
       }
 
       if (await _db.Conversations.FindAsync(guid) is not Conversation conversation) {

@@ -26,7 +26,7 @@ export const useConversationStore = defineStore(
 			isFetching.value = true;
 
 			const { statusCode, data } = await useFetch<Conversation[]>(
-				"/api/conversations",
+				"/api/conversations/all",
 				{
 					credentials: "include"
 				}

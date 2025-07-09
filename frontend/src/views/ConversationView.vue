@@ -13,9 +13,15 @@
 </script>
 
 <template>
-	<ConversationList />
-	<MessageList />
-	<div></div>
+	<div>
+		<ConversationList />
+		<MessageList />
+	</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+div {
+	@apply h-svh w-svw flex;
+}
+
+</style>

@@ -8,6 +8,7 @@
 	import { ref } from "vue";
 	import type { Conversation } from "../types";
 	import { getSignalR } from "../lib/hub";
+import { RouterLink } from "vue-router";
 
 	const conversationStore = useConversationStore();
 	const { addConversation } = conversationStore;
@@ -74,30 +75,40 @@
 </script>
 
 <template>
-	<div v-if="isFetching">Loading...</div>
-	<div v-else>
-		<div v-for="c in conversations">
-			<span v-if="c.type === 'Direct'">{{
-				c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
-			}}</span>
-			<span v-if="c.type === 'Group'">{{ c.name }}</span>
-			<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
-			<span v-if="c.lastMessageSentAt">{{ getDate(c.lastMessageSentAt) }}</span>
-			<span v-if="c.lastMessageSentAt">{{ getTime(c.lastMessageSentAt) }}</span>
-			<hr />
+	<div class="conversation-list">
+		<div v-if="isFetching">Loading...</div>
+		<div v-else>
+			<div v-for="c in conversations">
+				<RouterLink :to="{name: 'conversations', params: { id: c.id}}">
+					<span v-if="c.type === 'Direct'">{{
+						c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
+					}}</span>
+					<span v-if="c.type === 'Group'">{{ c.name }}</span>
+					<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
+					<span v-if="c.lastMessageSentAt">{{ getDate(c.lastMessageSentAt) }}</span>
+					<span v-if="c.lastMessageSentAt">{{ getTime(c.lastMessageSentAt) }}</span>
+				</RouterLink>
+				<hr />
+			</div>
+			<div v-if="isFetchingPost">Loading...</div>
+			<form @submit="startConversation" v-else>
+				Start a conversation!
+				<label>
+					User ID:
+					<input name="userId" v-model="userId" type="text" />
+				</label>
+				<button>Find</button>
+				<span v-if="errors.userId">{{ errors.userId }}</span>
+				<span v-if="errorMessage">{{ errorMessage }}</span>
+			</form>
 		</div>
-		<div v-if="isFetchingPost">Loading...</div>
-		<form @submit="startConversation" v-else>
-			Start a conversation!
-			<label>
-				User ID:
-				<input name="userId" v-model="userId" type="text" />
-			</label>
-			<button>Find</button>
-			<span v-if="errors.userId">{{ errors.userId }}</span>
-			<span v-if="errorMessage">{{ errorMessage }}</span>
-		</form>
 	</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+	@reference "../style.css";
+
+	.conversation-list {
+		@apply flex flex-col w-1/3 h-svh bg-blue-500;
+	}
+</style>

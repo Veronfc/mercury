@@ -40,3 +40,8 @@ namespace backend.Models
     //public string? UserEmail { get; init; }
   }
 }
+
+namespace backend.Models
+{
+  public record ConversationDto(Guid Id, ConversationType Type, string? Name, DateTime? LastMessageSentAt, string? LastMessageSnippet, List<ConversationMemberDto> Members);
+}

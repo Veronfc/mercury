@@ -16,3 +16,8 @@ namespace backend.Models
 
   }
 }
+
+namespace backend.Models
+{
+  public record ConversationMemberDto (string UserId, UserDto User);
+}

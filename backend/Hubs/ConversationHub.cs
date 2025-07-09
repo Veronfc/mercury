@@ -34,24 +34,41 @@ namespace backend.Hubs
 
     public async Task SendMessage(Guid conversationId, string content)
     {
-      if (Context.UserIdentifier is not string userId)
-      {
-        return;
-      }
+        if (Context.UserIdentifier is not string userId)
+        {
+          return;
+        }
 
-      Message message = new()
-      {
-        Id = Guid.NewGuid(),
-        ConversationId = conversationId,
-        SenderId = userId,
-        Content = content,
-        SentAt = DateTime.UtcNow
-      };
+        Message message = new()
+        {
+          Id = Guid.NewGuid(),
+          ConversationId = conversationId,
+          SenderId = userId,
+          Content = content,
+          SentAt = DateTime.UtcNow
+        };
 
-      await _db.Messages.AddAsync(message);
-      await _db.SaveChangesAsync();
+        if (!await _db.Conversations.AnyAsync(c => c.Id == conversationId))
+        {
+          throw new HubException("Invalid conversation ID");
+        }
 
-      await Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", message);
+        Conversation conversation = new() { Id = conversationId };
+        _db.Attach(conversation);
+        _db.Entry(conversation).Property(c => c.LastMessageSentAt).CurrentValue = message.SentAt;
+        _db.Entry(conversation).Property(c => c.LastMessageSentAt).IsModified = true;
+
+        string snippet = message.Content[..Math.Min(100, message.Content.Length)];
+
+        _db.Entry(conversation).Property(c => c.LastMessageSnippet).CurrentValue = snippet;
+        _db.Entry(conversation).Property(c => c.LastMessageSnippet).IsModified = true;
+
+        await _db.Messages.AddAsync(message);
+        await _db.SaveChangesAsync();
+
+        MessageDto messageDto = new(message.Id, message.ConversationId.ToString(), message.SenderId, message.Content, message.SentAt);
+
+        await Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", messageDto);
     }
   }
 }

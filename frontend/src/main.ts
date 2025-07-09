@@ -10,12 +10,13 @@ import { createPinia, storeToRefs } from "pinia";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import { useUserStore } from "./stores/userStore";
 import { connectSignalR } from "./lib/hub";
+import { useConversationStore } from "./stores/conversationStore";
 
 const routes = [
 	{ path: "/:pathMatch(.*)*", name: "404", component: NotFoundView },
 	{ path: "/", name: "home", component: HomeView },
 	{ path: "/auth", name: "auth", component: AuthView },
-	{ path: "/conversations", name: "conversations", component: ConversationView }
+	{ path: "/conversations/:id?", name: "conversations", component: ConversationView }
 ];
 
 const router = createRouter({
@@ -33,10 +34,12 @@ app.use(pinia);
 const userStore = useUserStore();
 const { setInfo } = userStore;
 const {isLoggedIn} = storeToRefs(userStore);
+const {getConversations} = useConversationStore();
 await setInfo()
 
 if (isLoggedIn.value) {
 	await connectSignalR();
+	await getConversations();
 }
 
 app.mount("#app");

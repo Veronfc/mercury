@@ -10,7 +10,7 @@ export const useMessageStore = defineStore(
 		const isFetching = ref(false);
 
 		const getMessages = async (conversationId: string) => {
-			if (messages.value[conversationId]) return;
+			//if (messages.value[conversationId]) return;
 
 			isFetching.value = true;
 
@@ -30,7 +30,7 @@ export const useMessageStore = defineStore(
 			console.log(statusCode.value);
 		};
 
-		const addMessage = async (message: Message) => {
+		const addMessage = (message: Message) => {
 			messages.value[message.conversationId].push(message);
 		};
 
