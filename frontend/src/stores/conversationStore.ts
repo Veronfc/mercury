@@ -11,15 +11,19 @@ export const useConversationStore = defineStore(
 
 		const sortConversations = () => {
 			conversations.value.sort((a, b) => {
-				const sentAtA = a.lastMessageSentAt ? new Date(a.lastMessageSentAt).getTime() : 0;
-				const sentAtB = b.lastMessageSentAt ? new Date(b.lastMessageSentAt).getTime() : 0;
+				const sentAtA = a.lastMessageSentAt
+					? new Date(a.lastMessageSentAt).getTime()
+					: 0;
+				const sentAtB = b.lastMessageSentAt
+					? new Date(b.lastMessageSentAt).getTime()
+					: 0;
 
 				return sentAtB - sentAtA;
-			})
-		}
+			});
+		};
 
 		const getConversation = (id: string) => {
-			return conversations.value.find(c => c.id === id);
+			return conversations.value.find((c) => c.id === id);
 		};
 
 		const getConversations = async () => {
@@ -47,7 +51,9 @@ export const useConversationStore = defineStore(
 		};
 
 		const updateConversation = (updatedConversation: Conversation) => {
-			const index = conversations.value.findIndex(c => c.id === updatedConversation.id)
+			const index = conversations.value.findIndex(
+				(c) => c.id === updatedConversation.id
+			);
 			conversations.value[index] = updatedConversation;
 			sortConversations();
 		};

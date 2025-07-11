@@ -2,12 +2,15 @@ import * as signalR from "@microsoft/signalr";
 import type { Message } from "../types";
 import { useMessageStore } from "../stores/messageStore";
 import { useConversationStore } from "../stores/conversationStore";
+import { storeToRefs } from "pinia";
+import { useUserStore } from "../stores/userStore";
 
 let connection: signalR.HubConnection | null = null;
 
 const connectSignalR = async () => {
 	const { addMessage } = useMessageStore();
 	const { getConversation, updateConversation } = useConversationStore();
+	const { userInfo } = storeToRefs(useUserStore())
 
 	if (connection) return connection;
 
@@ -22,6 +25,7 @@ const connectSignalR = async () => {
 		const conversation = getConversation(message.conversationId);
 		conversation!.lastMessageSentAt = message.sentAt;
 		conversation!.lastMessageSnippet = message.content.substring(0, 100);
+		conversation!.lastMessageSenderId = userInfo.value?.id;
 
 		updateConversation(conversation!);
 	});

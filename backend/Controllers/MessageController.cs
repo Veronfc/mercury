@@ -20,7 +20,7 @@ namespace backend.Controllers
         return BadRequest("Conversation ID is not valid");
       }
 
-      List<Message> messages = await _db.Messages.Where(m => m.ConversationId == id).OrderBy(m => m.SentAt).ToListAsync();
+      List<Message> messages = await _db.Messages.Where(m => m.ConversationId == id).OrderByDescending(m => m.SentAt).ToListAsync();
       
       return Ok(messages);
     }

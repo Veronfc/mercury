@@ -3,9 +3,7 @@
 	import { registerSchema } from "../schemas/authSchema";
 	import { useFetch } from "@vueuse/core";
 	import { ref } from "vue";
-	import { useRouter } from "vue-router";
-	import { useUserStore } from "../stores/userStore";
-import { connectSignalR } from "../lib/hub";
+	import { connectSignalR } from "../lib/hub";
 
 	const success = ref(false);
 
@@ -29,8 +27,8 @@ import { connectSignalR } from "../lib/hub";
 	}));
 
 	const errorMessage = ref();
-	const {setInfo} = useUserStore();
-	const router = useRouter();
+	// const { setInfo } = useUserStore();
+	// const router = useRouter();
 
 	const register = handleSubmit(async () => {
 		await execute(false);
@@ -46,16 +44,17 @@ import { connectSignalR } from "../lib/hub";
 		if (statusCode.value === 200) {
 			success.value = true;
 
-			setTimeout(async () => {
-				router.push({ name: "home" });
-			}, 2000);
+			// setTimeout(async () => {
+			// 	router.push({ name: "home" });
+			// }, 2000);
+			//TODO move to SetDisplayNameForm
 
 			await useFetch("/api/user/login?useCookies=true", {
 				credentials: "include"
 			}).post(() => ({ email: email.value, password: password.value }));
 
-			await setInfo();
-			await connectSignalR()
+			//await setInfo();
+			await connectSignalR();
 		}
 	});
 </script>
@@ -67,16 +66,21 @@ import { connectSignalR } from "../lib/hub";
 		<div v-else>
 			Register Form
 			<form @submit="register">
-				<input name="email" v-model="email" type="email" />
-				<span>{{ errors.email }}</span>
-				<input name="password" v-model="password" type="text" />
-				<span>{{ errors.password }}</span>
-				<button>Register</button>
+					<label>
+						Email:
+						<input name="email" v-model="email" type="email" />
+					</label>
+					<span>{{ errors.email }}</span>
+					<label>
+						Password:
+						<input name="password" v-model="password" type="text" />
+					</label>
+					<span>{{ errors.password }}</span>
+					<button>Register</button>
 			</form>
 			<span v-if="error">{{ errorMessage }}</span>
 			<RouterLink :to="{ name: 'auth', query: { mode: 'login' } }"
-				>Login</RouterLink
-			>
+				>Login</RouterLink>
 		</div>
 	</div>
 </template>

@@ -24,10 +24,10 @@
 	<div>Logged in: {{ isLoggedIn }}</div>
 	<div v-if="isLoggedIn">User info: {{ userInfo }}</div>
 	<button @click="logOut" v-if="isLoggedIn">Logout</button>
-	<br>
+	<br />
 	<RouterLink :to="{ name: 'auth', query: { mode: 'login' } }">Auth</RouterLink>
-	<br>
-	<RouterLink :to="{name: 'conversations'}">Conversations</RouterLink>
+	<br />
+	<RouterLink :to="{ name: 'conversations' }">Conversations</RouterLink>
 </template>
 
 <style scoped></style>

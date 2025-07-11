@@ -4,6 +4,7 @@ type Conversation = {
 	name?: string;
 	lastMessageSentAt?: string; //DateTime
 	lastMessageSnippet?: string;
+	lastMessageSenderId?: string;
 	members: ConversationMember[];
 };
 

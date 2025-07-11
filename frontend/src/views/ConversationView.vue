@@ -20,8 +20,7 @@
 </template>
 
 <style scoped>
-div {
-	@apply h-svh w-svw flex;
-}
-
+	div {
+		@apply h-svh w-svw flex;
+	}
 </style>

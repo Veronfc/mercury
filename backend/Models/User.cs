@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Models
 {
+  [Index(nameof(DisplayName), IsUnique = true)]
   public class User : IdentityUser
   {
     public string? DisplayName { get; set; }
@@ -19,4 +21,9 @@ namespace backend.Models
 namespace backend.Models
 {
   public record UserDto(string Id, string Email, string UserName, string DisplayName);
+}
+
+namespace backend.Models
+{
+  public record SetDisplayNameDto(string DisplayName);
 }

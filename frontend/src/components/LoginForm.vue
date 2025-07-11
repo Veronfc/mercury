@@ -4,7 +4,7 @@
 	import { useFetch } from "@vueuse/core";
 	import { useRouter } from "vue-router";
 	import { useUserStore } from "../stores/userStore";
-import { connectSignalR } from "../lib/hub";
+	import { connectSignalR } from "../lib/hub";
 
 	const { handleSubmit, errors } = useForm({
 		validationSchema: loginSchema
@@ -32,7 +32,7 @@ import { connectSignalR } from "../lib/hub";
 
 		if (statusCode.value === 200) {
 			await setInfo();
-			await connectSignalR()
+			await connectSignalR();
 			router.push({ name: "home" });
 		}
 	});

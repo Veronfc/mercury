@@ -63,6 +63,9 @@ namespace backend.Hubs
         _db.Entry(conversation).Property(c => c.LastMessageSnippet).CurrentValue = snippet;
         _db.Entry(conversation).Property(c => c.LastMessageSnippet).IsModified = true;
 
+        _db.Entry(conversation).Property(c => c.LastMessageSenderId).CurrentValue = userId;
+        _db.Entry(conversation).Property(c => c.LastMessageSenderId).IsModified = true;
+
         await _db.Messages.AddAsync(message);
         await _db.SaveChangesAsync();
 

@@ -17,29 +17,36 @@ namespace backend.Controllers
     private readonly UserManager<User> _userManager = userManager;
     private readonly IHubContext<ConversationHub> _hubContext = hubContext;
 
-    [HttpPost]
+    [HttpPost("direct")]
     [Authorize]
-    public async Task<ActionResult<Conversation>> CreateDirectConversation([FromBody] CreateDirectConversationDto body)
+    public async Task<ActionResult<ConversationDto>> CreateDirectConversation([FromBody] CreateDirectConversationDto body)
     {
-      //TODO add self id check
       //TODO code to get other user by email
       if (!ModelState.IsValid)
       {
         return BadRequest(ModelState);
       }
 
-      if (await _userManager.FindByIdAsync(body.UserId) is not User existingUser) {
-        return NotFound($"User with ID: {body.UserId} does not exist");
+      if (User.FindFirstValue(ClaimTypes.NameIdentifier) is not string userId)
+      {
+        return BadRequest("ID could not be determined");
       }
 
-      if (User.FindFirstValue(ClaimTypes.NameIdentifier) is not string userId) {
-        return BadRequest("ID could not be determined");
+      if (body.UserId == userId)
+      {
+        return BadRequest("You can not start a conversation with yourself");
+      }
+
+      if (await _userManager.FindByIdAsync(body.UserId) is not User existingUser)
+      {
+        return NotFound($"User with ID: {body.UserId} does not exist");
       }
 
       if (await _db.Conversations.Where(c => c.Type == ConversationType.Direct).SingleOrDefaultAsync(c => c.Members.Count == 2 && c.Members.Any(m => m.UserId == body.UserId) && c.Members.Any(m => m.UserId == userId)) is Conversation existingConversation)
       {
         return Conflict($"Conversation with ID: {existingConversation.Id} already exists");
-      };
+      }
+      ;
 
       Conversation conversation = new()
       {
@@ -57,16 +64,38 @@ namespace backend.Controllers
       await _db.Conversations.AddAsync(conversation);
       await _db.SaveChangesAsync();
 
-      //TODO add nested DTO to return conversation with members with users
+      Conversation createdConversation = await _db.Conversations.Include(c => c.Members).ThenInclude(cm => cm.User).SingleAsync(c => c.Id == conversation.Id);
 
-      return Created("", conversation);
+      ConversationDto conversationDto = new
+      (
+        createdConversation.Id,
+        createdConversation.Type,
+        createdConversation.Name,
+        createdConversation.LastMessageSentAt,
+        createdConversation.LastMessageSnippet,
+        createdConversation.LastMessageSenderId,
+        [.. createdConversation.Members.Select(m => new ConversationMemberDto
+        (
+          m.UserId,
+          new UserDto
+          (
+            m.User.Id,
+            m.User.Email,
+            m.User.UserName,
+            m.User.DisplayName
+          )
+        ))]
+      );
+
+      return Created("", conversationDto);
     }
 
     [HttpGet("all")]
     [Authorize]
     public async Task<ActionResult<IEnumerable<ConversationDto>>> GetConversations()
     {
-      if (User.FindFirstValue(ClaimTypes.NameIdentifier) is not string userId) {
+      if (User.FindFirstValue(ClaimTypes.NameIdentifier) is not string userId)
+      {
         return BadRequest("ID could not be determined");
       }
 
@@ -84,6 +113,7 @@ namespace backend.Controllers
         c.Name,
         c.LastMessageSentAt,
         c.LastMessageSnippet,
+        c.LastMessageSenderId,
         [.. c.Members.Select(m => new ConversationMemberDto
         (
           m.UserId,
@@ -109,7 +139,8 @@ namespace backend.Controllers
         return BadRequest();
       }
 
-      if (await _db.Conversations.FindAsync(guid) is not Conversation conversation) {
+      if (await _db.Conversations.FindAsync(guid) is not Conversation conversation)
+      {
         return NotFound();
       }
 

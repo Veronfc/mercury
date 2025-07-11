@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,7 +17,10 @@ namespace backend.Controllers
     [Authorize]
     public async Task<ActionResult<UserInfoResDto>> Info()
     {
-      User user = await _userManager.GetUserAsync(User);
+      if (await _userManager.GetUserAsync(User) is not User user)
+      {
+        return BadRequest("User profile not found");
+      }
 
       return Ok(new UserInfoResDto(user.Email, user.DisplayName, user.Id));
     }
@@ -26,7 +30,29 @@ namespace backend.Controllers
     public async Task<IActionResult> LogOut()
     {
       await _signInManager.SignOutAsync();
+
       return Ok("User logged out succesfully");
+    }
+
+    [HttpPost("displayname")]
+    [Authorize]
+    public async Task<IActionResult> SetDisplayName([FromBody] SetDisplayNameDto body)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      if (await _userManager.GetUserAsync(User) is not User user)
+      {
+        return BadRequest("User profile not found");
+      }
+
+      user.DisplayName = body.DisplayName;
+
+      await _userManager.UpdateAsync(user);
+
+      return Ok("Display name set");
     }
   }
 }

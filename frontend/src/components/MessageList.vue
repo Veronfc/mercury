@@ -2,12 +2,14 @@
 	import { computed, ref, watch } from "vue";
 	import { useRoute } from "vue-router";
 	import { storeToRefs } from "pinia";
-	import {Icon} from "@iconify/vue"
+	import { Icon } from "@iconify/vue";
 	import { useMessageStore } from "../stores/messageStore";
 	import { useConversationStore } from "../stores/conversationStore";
-import { getSignalR } from "../lib/hub";
-import { useUserStore } from "../stores/userStore";
-	
+	import { getSignalR } from "../lib/hub";
+	import { useUserStore } from "../stores/userStore";
+	import { useField, useForm } from "vee-validate";
+	import { sendMessageSchema } from "../schemas/messageSchema";
+
 	const route = useRoute();
 	const { getConversation } = useConversationStore();
 	const messageStore = useMessageStore();
@@ -18,15 +20,15 @@ import { useUserStore } from "../stores/userStore";
 	const conversationId = computed(() => route.params.id as string);
 
 	const getDate = (dateStr: string) => {
-		const date = new Date(dateStr)
+		const date = new Date(dateStr);
 		//TODO add today and yesterday check
 		return new Intl.DateTimeFormat("en-GB", {
 			weekday: "short",
 			day: "2-digit",
 			month: "short",
 			year: "numeric"
-		}).format(date)
-	}
+		}).format(date);
+	};
 
 	const getTime = (dateStr: string) => {
 		const date = new Date(dateStr);
@@ -36,17 +38,23 @@ import { useUserStore } from "../stores/userStore";
 			minute: "2-digit",
 			hour12: false
 		}).format(date);
-	}
+	};
 
-	//TODO add vee-validate/zod form validation
-	const connection = getSignalR();
-	const message = ref("");
+	const { handleSubmit, errors, isSubmitting } = useForm({
+		validationSchema: sendMessageSchema
+	});
 
-	const sendMessage = async () => {
-		await connection?.invoke("SendMessage", conversationId.value, message.value);
+	const { value: content } = useField<string>("content");
 
-		message.value = ""
-	}
+	const sendMessage = handleSubmit(async (values) => {
+		await getSignalR()?.invoke(
+			"SendMessage",
+			conversationId.value,
+			values.content
+		);
+
+		content.value = "";
+	});
 
 	watch(
 		conversationId,
@@ -62,11 +70,13 @@ import { useUserStore } from "../stores/userStore";
 </script>
 
 <template>
-	<div class="message-list">
-		<div v-if="isFetching">Loading...</div>
+	<div class="message-list" v-if="getConversation(conversationId)">
+		<div v-if="isFetching" class="messages">Loading...</div>
 		<div class="messages" v-else>
 			<div v-for="m in messages[conversationId]">
-				<div class="message" :class="m.senderId === userInfo?.id ? 'right' : ''">
+				<div
+					class="message"
+					:class="m.senderId === userInfo?.id ? 'right' : ''">
 					<span>{{ m.content }}</span>
 					<span>{{ getDate(m.sentAt) }}</span>
 					<span>{{ getTime(m.sentAt) }}</span>
@@ -74,11 +84,15 @@ import { useUserStore } from "../stores/userStore";
 			</div>
 		</div>
 		<div class="message-new">
-			<form @submit.prevent="sendMessage">
-				<input v-model="message">
-				<button><Icon icon="ri:send-plane-fill"/></button>
+			<form @submit="sendMessage">
+				<input name="content" v-model="content" type="text" placeholder="Type a message..."/>
+				<button><Icon icon="ri:send-plane-fill" /></button>
 			</form>
 		</div>
+		<div class="message-error" v-if="errors.content">
+			{{ errors.content }}
+		</div>
+		<div class="message-submission" v-if="isSubmitting">Sending...</div>
 	</div>
 </template>
 
@@ -86,28 +100,28 @@ import { useUserStore } from "../stores/userStore";
 	@reference "../style.css";
 
 	.message-list {
-		@apply flex flex-col relative h-svh w-full p-4 bg-amber-500;
+		@apply flex flex-col h-svh w-full p-4 gap-4 bg-white relative;
 
 		.messages {
-			@apply flex flex-col gap-2 items-start w-full;
+			@apply flex flex-col-reverse gap-2 items-start w-full h-full overflow-y-scroll;
 
 			.message {
 				@apply flex flex-col border rounded w-max p-2;
 			}
 
 			.right {
-				@apply self-end bg-amber-950 text-white;
+				@apply bg-black text-white;
 			}
 		}
 
 		.message-new {
-			@apply min-w-full;
+			@apply w-full;
 
 			form {
-				@apply flex bottom-4 gap-2 absolute;
+				@apply flex gap-2;
 
 				input {
-					@apply border rounded;
+					@apply border rounded w-full p-2 bg-black text-white border-black;
 				}
 
 				button {
@@ -118,6 +132,14 @@ import { useUserStore } from "../stores/userStore";
 					}
 				}
 			}
+		}
+
+		.message-error {
+			@apply absolute top-4 right-4 border-2 border-red-500 rounded p-2;
+		}
+
+		.message-submission {
+			@apply absolute top-4 right-4 border-2 border-green-500 rounded p-2;
 		}
 	}
 </style>

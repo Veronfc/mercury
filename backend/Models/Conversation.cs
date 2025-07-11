@@ -15,6 +15,7 @@ namespace backend.Models
     public User Creator { get; set; }
     public DateTime? LastMessageSentAt { get; set; }
     public string? LastMessageSnippet { get; set; }
+    public string? LastMessageSenderId { get; set; }
     public ICollection<ConversationMember> Members { get; set; } = [];
     public ICollection<Message> Messages { get; } = [];
   }
@@ -43,5 +44,5 @@ namespace backend.Models
 
 namespace backend.Models
 {
-  public record ConversationDto(Guid Id, ConversationType Type, string? Name, DateTime? LastMessageSentAt, string? LastMessageSnippet, List<ConversationMemberDto> Members);
+  public record ConversationDto(Guid Id, ConversationType Type, string? Name, DateTime? LastMessageSentAt, string? LastMessageSnippet, string? LastMessageSenderId, List<ConversationMemberDto> Members);
 }

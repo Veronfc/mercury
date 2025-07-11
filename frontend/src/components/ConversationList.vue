@@ -1,14 +1,15 @@
 <script setup lang="ts">
+	import { ref } from "vue";
+	import { RouterLink } from "vue-router";
+	import { useFetch } from "@vueuse/core";
 	import { storeToRefs } from "pinia";
+	import { useField, useForm } from "vee-validate";
+	import { Icon } from "@iconify/vue";
 	import { useConversationStore } from "../stores/conversationStore";
 	import { useUserStore } from "../stores/userStore";
-	import { useField, useForm } from "vee-validate";
 	import { startConversationSchema } from "../schemas/conversationSchema";
-	import { useFetch } from "@vueuse/core";
-	import { ref } from "vue";
 	import type { Conversation } from "../types";
 	import { getSignalR } from "../lib/hub";
-import { RouterLink } from "vue-router";
 
 	const conversationStore = useConversationStore();
 	const { addConversation } = conversationStore;
@@ -29,7 +30,7 @@ import { RouterLink } from "vue-router";
 		data,
 		execute
 	} = useFetch<Conversation>(
-		"/api/conversations",
+		"/api/conversations/direct",
 		{
 			credentials: "include"
 		},
@@ -38,30 +39,32 @@ import { RouterLink } from "vue-router";
 		}
 	)
 		.post(() => ({ userId: userId.value }))
-		.json<Conversation>()
+		.json<Conversation>();
 
 	const startConversation = handleSubmit(async () => {
 		await execute(false);
 
-		if (statusCode.value !== 201)
-			errorMessage.value = await response.value?.json();
+		if (statusCode.value !== 201) errorMessage.value = await response.value?.json();
 
 		if (data.value) {
-			getSignalR()?.invoke("JoinConversation", data.value?.id);
+			await getSignalR()?.invoke("JoinConversation", data.value?.id);
+
 			addConversation(data.value);
 		}
+
+		userId.value = "";
 	});
 
 	const getDate = (dateStr: string) => {
-		const date = new Date(dateStr)
+		const date = new Date(dateStr);
 		//TODO add today and yesterday check
 		return new Intl.DateTimeFormat("en-GB", {
 			weekday: "long",
 			day: "2-digit",
 			month: "short",
 			year: "numeric"
-		}).format(date)
-	}
+		}).format(date);
+	};
 
 	const getTime = (dateStr: string) => {
 		const date = new Date(dateStr);
@@ -71,38 +74,42 @@ import { RouterLink } from "vue-router";
 			minute: "2-digit",
 			hour12: false
 		}).format(date);
-	}
+	};
+	//TODO add received/sent icons to conversations
 </script>
 
 <template>
 	<div class="conversation-list">
 		<div v-if="isFetching">Loading...</div>
-		<div v-else>
-			<div v-for="c in conversations">
-				<RouterLink :to="{name: 'conversations', params: { id: c.id}}">
-					<div class="conversation">
-						<span v-if="c.type === 'Direct'">{{
-							c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
-						}}</span>
-						<span v-if="c.type === 'Group'">{{ c.name }}</span>
-						<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
-						<span v-if="c.lastMessageSentAt">{{ getDate(c.lastMessageSentAt) }}</span>
-						<span v-if="c.lastMessageSentAt">{{ getTime(c.lastMessageSentAt) }}</span>
+		<div v-else v-for="c in conversations" class="conversation">
+			<RouterLink :to="{ name: 'conversations', params: { id: c.id } }">
+					<span v-if="c.type === 'Direct'">{{
+						c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
+					}}</span>
+					<span v-if="c.type === 'Group'">{{ c.name }}</span>
+					<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
+					<Icon :icon="c.lastMessageSenderId === userInfo?.id ? 'mdi:call-made' : 'mdi:call-received'"/>
+					<div class="date-time">
+					<span v-if="c.lastMessageSentAt">{{
+						getDate(c.lastMessageSentAt)
+					}}</span>
+					<span v-if="c.lastMessageSentAt">{{
+						getTime(c.lastMessageSentAt)
+					}}</span>
 					</div>
-				</RouterLink>
-			</div>
-			<div v-if="isFetchingPost">Loading...</div>
-			<form @submit="startConversation" v-else>
-				Start a conversation!
-				<label>
-					User ID:
-					<input name="userId" v-model="userId" type="text" />
-				</label>
-				<button>Find</button>
-				<span v-if="errors.userId">{{ errors.userId }}</span>
-				<span v-if="errorMessage">{{ errorMessage }}</span>
-			</form>
+			</RouterLink>
 		</div>
+		<div v-if="isFetchingPost">Loading...</div>
+		<form v-else @submit="startConversation" class="conversation-start">
+			Start a conversation!
+			<label>
+				User ID:
+				<input name="userId" v-model="userId" type="text" />
+			</label>
+			<button><Icon icon="material-symbols:person-search" /></button>
+			<span v-if="errors.userId">{{ errors.userId }}</span>
+			<span v-if="errorMessage">{{ errorMessage }}</span>
+		</form>
 	</div>
 </template>
 
@@ -110,10 +117,30 @@ import { RouterLink } from "vue-router";
 	@reference "../style.css";
 
 	.conversation-list {
-		@apply flex flex-col w-min h-svh bg-blue-500 p-4;
+		@apply flex flex-col w-min h-svh bg-black text-white p-4 gap-4 overflow-y-scroll overflow-x-auto;
 
-		.conversation {
-			@apply border flex flex-col rounded bg-black text-white p-2;
-		}
+			.conversation {
+				@apply border flex flex-col rounded bg-white text-black p-2;
+
+				.date-time {
+					@apply flex content-between text-xs;
+				}
+			}
+
+			.conversation-start {
+				@apply bg-green-500 text-black rounded p-2 flex flex-col items-center gap-2;
+
+				input {
+					@apply border rounded p-1;
+				}
+
+				button {
+					@apply cursor-pointer bg-black rounded text-green-500 w-min p-1;
+
+					svg {
+						@apply text-2xl;
+					}
+				}
+			}
 	}
 </style>

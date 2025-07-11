@@ -31,7 +31,7 @@ export const useMessageStore = defineStore(
 		};
 
 		const addMessage = (message: Message) => {
-			messages.value[message.conversationId].push(message);
+			messages.value[message.conversationId].unshift(message);
 		};
 
 		return { messages, isFetching, getMessages, addMessage };
