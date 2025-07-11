@@ -50,6 +50,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             ([FromBody] RegisterRequest registration, HttpContext context, [FromServices] IServiceProvider sp) =>
         {
             var userManager = sp.GetRequiredService<UserManager<TUser>>();
+            var signInManager = sp.GetRequiredService<SignInManager<TUser>>();
 
             if (!userManager.SupportsUserEmail)
             {
@@ -76,6 +77,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             }
 
             //await SendConfirmationEmailAsync(user, userManager, context, email);
+            await signInManager.SignInAsync(user, true);
             return TypedResults.Ok();
         });
 

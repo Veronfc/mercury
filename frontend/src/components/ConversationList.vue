@@ -44,7 +44,8 @@
 	const startConversation = handleSubmit(async () => {
 		await execute(false);
 
-		if (statusCode.value !== 201) errorMessage.value = await response.value?.json();
+		if (statusCode.value !== 201)
+			errorMessage.value = await response.value?.json();
 
 		if (data.value) {
 			await getSignalR()?.invoke("JoinConversation", data.value?.id);
@@ -75,7 +76,6 @@
 			hour12: false
 		}).format(date);
 	};
-	//TODO add received/sent icons to conversations
 </script>
 
 <template>
@@ -83,20 +83,25 @@
 		<div v-if="isFetching">Loading...</div>
 		<div v-else v-for="c in conversations" class="conversation">
 			<RouterLink :to="{ name: 'conversations', params: { id: c.id } }">
-					<span v-if="c.type === 'Direct'">{{
-						c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
-					}}</span>
-					<span v-if="c.type === 'Group'">{{ c.name }}</span>
-					<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
-					<Icon :icon="c.lastMessageSenderId === userInfo?.id ? 'mdi:call-made' : 'mdi:call-received'"/>
-					<div class="date-time">
+				<span v-if="c.type === 'Direct'">{{
+					c.members.find((cm) => cm.userId !== userInfo?.id)?.user.displayName ? c.members.find((cm) => cm.userId !== userInfo?.id)?.user.displayName : c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
+				}}</span>
+				<span v-if="c.type === 'Group'">{{ c.name }}</span>
+				<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
+				<Icon
+					:icon="
+						c.lastMessageSenderId === userInfo?.id
+							? 'mdi:call-made'
+							: 'mdi:call-received'
+					" />
+				<div class="date-time">
 					<span v-if="c.lastMessageSentAt">{{
 						getDate(c.lastMessageSentAt)
 					}}</span>
 					<span v-if="c.lastMessageSentAt">{{
 						getTime(c.lastMessageSentAt)
 					}}</span>
-					</div>
+				</div>
 			</RouterLink>
 		</div>
 		<div v-if="isFetchingPost">Loading...</div>
@@ -119,28 +124,28 @@
 	.conversation-list {
 		@apply flex flex-col w-min h-svh bg-black text-white p-4 gap-4 overflow-y-scroll overflow-x-auto;
 
-			.conversation {
-				@apply border flex flex-col rounded bg-white text-black p-2;
+		.conversation {
+			@apply border flex flex-col rounded bg-white text-black p-2;
 
-				.date-time {
-					@apply flex content-between text-xs;
-				}
+			.date-time {
+				@apply flex content-between text-xs;
+			}
+		}
+
+		.conversation-start {
+			@apply bg-green-500 text-black rounded p-2 flex flex-col items-center gap-2;
+
+			input {
+				@apply border rounded p-1;
 			}
 
-			.conversation-start {
-				@apply bg-green-500 text-black rounded p-2 flex flex-col items-center gap-2;
+			button {
+				@apply cursor-pointer bg-black rounded text-green-500 w-min p-1;
 
-				input {
-					@apply border rounded p-1;
-				}
-
-				button {
-					@apply cursor-pointer bg-black rounded text-green-500 w-min p-1;
-
-					svg {
-						@apply text-2xl;
-					}
+				svg {
+					@apply text-2xl;
 				}
 			}
+		}
 	}
 </style>

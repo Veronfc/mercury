@@ -4,6 +4,8 @@
 	import { useFetch } from "@vueuse/core";
 	import { ref } from "vue";
 	import { connectSignalR } from "../lib/hub";
+	import { useUserStore } from "../stores/userStore";
+	import { useRouter } from "vue-router";
 
 	const success = ref(false);
 
@@ -27,8 +29,8 @@
 	}));
 
 	const errorMessage = ref();
-	// const { setInfo } = useUserStore();
-	// const router = useRouter();
+	const { setInfo } = useUserStore();
+	const router = useRouter();
 
 	const register = handleSubmit(async () => {
 		await execute(false);
@@ -44,16 +46,15 @@
 		if (statusCode.value === 200) {
 			success.value = true;
 
-			// setTimeout(async () => {
-			// 	router.push({ name: "home" });
-			// }, 2000);
-			//TODO move to SetDisplayNameForm
+			setTimeout(async () => {
+				router.push({ name: "home" });
+			}, 2000);
 
-			await useFetch("/api/user/login?useCookies=true", {
-				credentials: "include"
-			}).post(() => ({ email: email.value, password: password.value }));
+			// await useFetch("/api/user/login?useCookies=true", {
+			// 	credentials: "include"
+			// }).post(() => ({ email: email.value, password: password.value }));
 
-			//await setInfo();
+			await setInfo();
 			await connectSignalR();
 		}
 	});
@@ -66,21 +67,22 @@
 		<div v-else>
 			Register Form
 			<form @submit="register">
-					<label>
-						Email:
-						<input name="email" v-model="email" type="email" />
-					</label>
-					<span>{{ errors.email }}</span>
-					<label>
-						Password:
-						<input name="password" v-model="password" type="text" />
-					</label>
-					<span>{{ errors.password }}</span>
-					<button>Register</button>
+				<label>
+					Email:
+					<input name="email" v-model="email" type="email" />
+				</label>
+				<span>{{ errors.email }}</span>
+				<label>
+					Password:
+					<input name="password" v-model="password" type="text" />
+				</label>
+				<span>{{ errors.password }}</span>
+				<button>Register</button>
 			</form>
 			<span v-if="error">{{ errorMessage }}</span>
 			<RouterLink :to="{ name: 'auth', query: { mode: 'login' } }"
-				>Login</RouterLink>
+				>Login</RouterLink
+			>
 		</div>
 	</div>
 </template>

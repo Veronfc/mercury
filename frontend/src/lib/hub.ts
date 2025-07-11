@@ -10,7 +10,7 @@ let connection: signalR.HubConnection | null = null;
 const connectSignalR = async () => {
 	const { addMessage } = useMessageStore();
 	const { getConversation, updateConversation } = useConversationStore();
-	const { userInfo } = storeToRefs(useUserStore())
+	const { userInfo } = storeToRefs(useUserStore());
 
 	if (connection) return connection;
 

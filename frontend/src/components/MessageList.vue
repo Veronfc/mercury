@@ -85,7 +85,11 @@
 		</div>
 		<div class="message-new">
 			<form @submit="sendMessage">
-				<input name="content" v-model="content" type="text" placeholder="Type a message..."/>
+				<input
+					name="content"
+					v-model="content"
+					type="text"
+					placeholder="Type a message..." />
 				<button><Icon icon="ri:send-plane-fill" /></button>
 			</form>
 		</div>

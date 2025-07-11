@@ -11,11 +11,13 @@ import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import { useUserStore } from "./stores/userStore";
 import { connectSignalR } from "./lib/hub";
 import { useConversationStore } from "./stores/conversationStore";
+import UserView from "./views/UserView.vue";
 
 const routes = [
 	{ path: "/:pathMatch(.*)*", name: "404", component: NotFoundView },
 	{ path: "/", name: "home", component: HomeView },
 	{ path: "/auth", name: "auth", component: AuthView },
+	{ path: "/user", name: "user", component: UserView },
 	{
 		path: "/conversations/:id?",
 		name: "conversations",

@@ -1,8 +1,11 @@
+using System.Data.Common;
 using System.Security.Claims;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace backend.Controllers
 {
@@ -50,7 +53,14 @@ namespace backend.Controllers
 
       user.DisplayName = body.DisplayName;
 
-      await _userManager.UpdateAsync(user);
+      try
+      {
+        await _userManager.UpdateAsync(user);
+      }
+      catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == PostgresErrorCodes.UniqueViolation)
+      {
+        return Conflict("Display name is already in use");
+      }
 
       return Ok("Display name set");
     }
