@@ -31,6 +31,7 @@
 		}).format(date);
 	};
 
+	// FIXME validate only onsubmit
 	const { handleSubmit, errors, isSubmitting } = useForm({
 		validationSchema: sendMessageSchema
 	});
@@ -54,6 +55,7 @@
 				return;
 			}
 
+			content.value = "";
 			getMessages(id);
 		},
 		{ immediate: true }
@@ -84,10 +86,12 @@
 				<button><Icon icon="ri:send-plane-fill" /></button>
 			</form>
 		</div>
-		<div class="message-error" v-if="errors.content">
-			{{ errors.content }}
-		</div>
-		<div class="message-submission" v-if="isSubmitting">Sending...</div>
+		<TransitionGroup name="toast">
+			<div v-if="errors.content" class="toast error">
+				{{ errors.content }}
+			</div>
+			<div v-if="isSubmitting" class="toast progress">Sending</div>
+		</TransitionGroup>
 	</div>
 	<div v-else class="message-list"></div>
 </template>
@@ -96,17 +100,26 @@
 	@reference "../style.css";
 
 	.message-list {
-		@apply flex flex-col h-svh w-full p-4 gap-4 bg-main relative;
+		@apply flex h-svh w-full flex-col gap-4 bg-gradient-to-br from-primary-bgd via-secondary-bgd to-tertiary-bgd p-4;
 
+		/* FIXME message left and right alignment */
 		.messages {
-			@apply flex flex-col-reverse gap-2 items-start w-full h-full overflow-y-scroll;
+			@apply flex h-full w-full flex-col-reverse items-start gap-2 overflow-y-scroll;
 
 			.message {
-				@apply flex flex-col border rounded w-max p-2;
+				@apply flex w-max flex-col rounded border border-tertiary-bgd p-2 bg-tertiary-bgd text-primary-txt duration-150;
+
+				&:hover {
+					@apply border-secondary-act;
+				}
 			}
 
 			.right {
-				@apply bg-black text-white;
+				@apply bg-primary-bgd text-secondary-txt border-primary-bgd self-end;
+
+				&:hover {
+					@apply border-primary-act;
+				}
 			}
 		}
 
@@ -117,25 +130,25 @@
 				@apply flex gap-2;
 
 				input {
-					@apply border rounded w-full p-2 bg-black text-white border-black;
+					@apply w-full rounded border border-primary-bgd bg-primary-bgd py-2 px-3 text-primary-txt outline-0 duration-300;
+
+					&:focus, &:hover {
+						@apply border-primary-act;
+					}
+
+					&::placeholder {
+						@apply text-secondary-txt;
+					}
 				}
 
 				button {
-					@apply bg-black rounded p-2 cursor-pointer;
+					@apply cursor-pointer rounded bg-primary-act p-2;
 
 					svg {
-						@apply text-2xl text-white;
+						@apply text-2xl text-primary-txt;
 					}
 				}
 			}
-		}
-
-		.message-error {
-			@apply absolute top-4 right-4 border-2 border-red-500 rounded p-2;
-		}
-
-		.message-submission {
-			@apply absolute top-4 right-4 border-2 border-green-500 rounded p-2;
 		}
 	}
 </style>

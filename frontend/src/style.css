@@ -1,13 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-	--color-dark: #0a1128;
-	--color-medium: #001f54;
-	--color-main: #034078;
-	--color-action: #1282a2;
-	--color-light: #fefcfb;
+	--color-primary-bgd: #0a0a0a;
+	--color-secondary-bgd: #1a1a1a;
+	--color-tertiary-bgd: #2a2a2a;
+	--color-primary-act: #e63946;
+	--color-secondary-act: #f77f00;
+	--color-primary-txt: #ffffff;
+	--color-secondary-txt: #a0a0a0;
+	--color-error: #dc2626;
+	--color-success: #16a34a;
+	--color-progress: #f59e0b;
 }
 
 * {
 	@apply m-0 p-0;
+}
+
+.toast {
+	@apply absolute top-4 right-4 rounded px-4 py-2 duration-300;
+}
+
+.progress {
+	@apply bg-progress text-secondary-bgd;
+}
+
+.success {
+	@apply bg-success text-primary-bgd;
+}
+
+.error {
+	@apply bg-error text-primary-txt;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+	transition: all 0.75s ease;
+}
+.toast-enter-from,
+.toast-leave-to {
+	opacity: 0;
+	transform: translateX(1rem);
 }

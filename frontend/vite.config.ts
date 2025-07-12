@@ -29,9 +29,6 @@ export default defineConfig({
 					pinia: ["defineStore", "storeToRefs", "createPinia"]
 				},
 				{
-					"pinia-plugin-persistedstate": ["piniaPluginPersistedState"]
-				},
-				{
 					"@vueuse/core": ["useFetch"]
 				},
 				{

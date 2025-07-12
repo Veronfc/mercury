@@ -6,6 +6,7 @@
 	const { conversations, isFetching } = storeToRefs(conversationStore);
 	const { userInfo } = storeToRefs(useUserStore());
 	const errorMessage = ref("");
+	const startConversationOpen = ref(true);
 
 	const { handleSubmit, errors } = useForm({
 		validationSchema: startConversationSchema
@@ -35,7 +36,7 @@
 		await execute(false);
 
 		if (statusCode.value !== 201)
-			errorMessage.value = await response.value?.json();
+			errorMessage.value = await response.value?.text()!;
 
 		if (data.value) {
 			await getSignalR()?.invoke("JoinConversation", data.value?.id);
@@ -75,59 +76,66 @@
 <template>
 	<div class="conversation-list">
 		<div v-if="isFetching">Loading...</div>
-		<div v-else v-for="c in conversations" class="conversation">
-			<RouterLink :to="{ name: 'conversations', params: { id: c.id } }">
-				<span v-if="c.type === 'Direct'"
-					>{{
-						c.members.find((cm) => cm.userId !== userInfo?.id)?.user.displayName
-							? c.members.find((cm) => cm.userId !== userInfo?.id)?.user
-									.displayName
-							: c.members.find((cm) => cm.userId !== userInfo?.id)?.user
-									.userName
-					}}Last seen:
-					{{
-						getDate(
-							c.members.find((cm) => cm.userId !== userInfo?.id)?.user
-								.lastActive
-						)
-					}}
-					-
-					{{
-						getTime(
-							c.members.find((cm) => cm.userId !== userInfo?.id)?.user
-								.lastActive
-						)
-					}}</span
-				>
-				<span v-if="c.type === 'Group'">{{ c.name }}</span>
-				<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
-				<Icon
-					:icon="
-						c.lastMessageSenderId === userInfo?.id
-							? 'mdi:call-made'
-							: 'mdi:call-received'
-					" />
-				<div class="date-time">
-					<span v-if="c.lastMessageSentAt">{{
-						getDate(c.lastMessageSentAt)
-					}}</span>
-					<span v-if="c.lastMessageSentAt">{{
-						getTime(c.lastMessageSentAt)
-					}}</span>
+		<RouterLink
+			v-else
+			v-for="c in conversations"
+			:to="{ name: 'conversations', params: { id: c.id } }"
+			class="conversation"
+			exact-active-class="conversation-active">
+			<span v-if="c.type === 'Direct'"
+				>{{
+					c.members.find((cm) => cm.userId !== userInfo?.id)?.user.displayName
+						? c.members.find((cm) => cm.userId !== userInfo?.id)?.user
+								.displayName
+						: c.members.find((cm) => cm.userId !== userInfo?.id)?.user.userName
+				}}Last seen:
+				{{
+					getDate(
+						c.members.find((cm) => cm.userId !== userInfo?.id)?.user.lastActive
+					)
+				}}
+				-
+				{{
+					getTime(
+						c.members.find((cm) => cm.userId !== userInfo?.id)?.user.lastActive
+					)
+				}}</span
+			>
+			<span v-if="c.type === 'Group'">{{ c.name }}</span>
+			<span v-if="c.lastMessageSnippet">{{ c.lastMessageSnippet }}</span>
+			<Icon
+				:icon="
+					c.lastMessageSenderId === userInfo?.id
+						? 'mdi:call-made'
+						: 'mdi:call-received'
+				" />
+			<div class="date-time">
+				<span v-if="c.lastMessageSentAt">{{
+					getDate(c.lastMessageSentAt)
+				}}</span>
+				<span v-if="c.lastMessageSentAt">{{
+					getTime(c.lastMessageSentAt)
+				}}</span>
+			</div>
+		</RouterLink>
+		<TransitionGroup name="start-conversation">
+			<form v-if="startConversationOpen" @submit="startConversation">
+				<div v-if="isFetchingPost">Loading...</div>
+				<div v-else class="start-conversation">
+					Find user by ID
+					<input
+						name="userId"
+						v-model="userId"
+						type="text"
+						placeholder="Enter User ID here" />
+					<button>Search</button>
+					<span v-if="errors.userId">{{ errors.userId }}</span>
+					<span v-if="errorMessage">{{ errorMessage }}</span>
+					<Icon @click="startConversationOpen = !startConversationOpen" icon="material-symbols:cancel-presentation-rounded" class="start-conversation-close"/>
 				</div>
-			</RouterLink>
-		</div>
-		<div v-if="isFetchingPost">Loading...</div>
-		<form v-else @submit="startConversation" class="conversation-start">
-			Start a conversation!
-			<label>
-				User ID:
-				<input name="userId" v-model="userId" type="text" />
-			</label>
-			<button><Icon icon="material-symbols:person-search" /></button>
-			<span v-if="errors.userId">{{ errors.userId }}</span>
-			<span v-if="errorMessage">{{ errorMessage }}</span>
-		</form>
+			</form>
+			<button v-else @click="startConversationOpen = !startConversationOpen" class="start-conversation-open">New conversation</button>
+		</TransitionGroup>
 	</div>
 </template>
 
@@ -135,30 +143,64 @@
 	@reference "../style.css";
 
 	.conversation-list {
-		@apply flex flex-col w-max h-svh bg-dark text-white p-4 gap-4 overflow-y-scroll overflow-x-auto;
+		@apply flex h-svh w-max flex-col gap-4 overflow-x-auto overflow-y-scroll bg-primary-bgd p-4 text-primary-txt;
 
 		.conversation {
-			@apply border border-medium flex flex-col rounded bg-medium text-light p-2;
+			@apply flex flex-col rounded border border-tertiary-bgd bg-tertiary-bgd p-2 text-primary-txt duration-300;
+
+			&:hover {
+				@apply border-primary-act;
+			}
 
 			.date-time {
 				@apply flex content-between text-xs;
 			}
 		}
 
-		.conversation-start {
-			@apply bg-main text-light rounded p-2 flex flex-col items-center gap-2;
+		.conversation-active {
+			@apply border-primary-act bg-primary-act;
+		}
+
+		.start-conversation {
+			@apply flex flex-col relative items-start gap-4 rounded border border-secondary-bgd bg-secondary-bgd p-4 text-primary-txt;
+
+			&:hover {
+				@apply border-secondary-act;
+			}
 
 			input {
-				@apply border rounded p-1;
+				@apply w-full rounded border border-secondary-txt px-3 py-2 outline-0 outline-secondary-act;
+
+				&::placeholder {
+					@apply text-secondary-txt;
+				}
 			}
 
 			button {
-				@apply cursor-pointer bg-action rounded text-light w-min p-1;
+				@apply cursor-pointer rounded border border-secondary-act bg-secondary-act py-2 px-4 w-full text-primary-bgd duration-300;
+			}
 
-				svg {
-					@apply text-2xl;
-				}
+			.start-conversation-close {
+				@apply text-secondary-act text-4xl absolute top-3 right-3 cursor-pointer;
 			}
 		}
+
+		.start-conversation-open {
+			@apply cursor-pointer rounded border border-secondary-act bg-secondary-act py-2 px-4 w-full text-primary-bgd;
+		}
 	}
+
+	.start-conversation-enter-active,
+.start-conversation-leave-active {
+	transition: all 0.5s ease;
+}
+.start-conversation-enter-from {
+	opacity: 0;
+	transform: translateY(1rem);
+}
+
+.start-conversation-leave-to {
+	opacity: 0;
+	transform: translateY(-1rem);
+}
 </style>

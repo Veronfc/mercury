@@ -5,6 +5,7 @@ import HomeView from "./views/HomeView.vue";
 import AuthView from "./views/AuthView.vue";
 import ConversationView from "./views/ConversationView.vue";
 import UserView from "./views/UserView.vue";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 const routes = [
 	{ path: "/:pathMatch(.*)*", name: "404", component: NotFoundView },
@@ -24,7 +25,7 @@ const router = createRouter({
 });
 
 const pinia = createPinia();
-pinia.use(piniaPluginPersistedState);
+pinia.use(piniaPluginPersistedstate);
 
 const app = createApp(App);
 app.use(router);

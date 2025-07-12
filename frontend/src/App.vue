@@ -26,7 +26,7 @@
 	@reference './style.css';
 
 	.notification {
-		@apply absolute top-4 border-2 border-red-500 rounded left-1/2 -translate-x-1/2 flex flex-col bg-white items-center p-2 gap-2;
+		@apply absolute top-4 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 rounded border-2 border-red-500 bg-white p-2;
 
 		.link {
 			@apply border p-2;

@@ -16,6 +16,6 @@
 
 <style scoped>
 	div {
-		@apply h-svh w-svw flex;
+		@apply flex h-svh w-svw;
 	}
 </style>

@@ -6,48 +6,41 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-	const computed: (typeof import("vue"))["computed"];
-	const connectSignalR: (typeof import("./hub"))["connectSignalR"];
-	const createApp: (typeof import("vue"))["createApp"];
-	const createPinia: (typeof import("pinia"))["createPinia"];
-	const createRouter: (typeof import("vue-router"))["createRouter"];
-	const createWebHistory: (typeof import("vue-router"))["createWebHistory"];
-	const defineStore: (typeof import("pinia"))["defineStore"];
-	const disconnectSignalR: (typeof import("./hub"))["disconnectSignalR"];
-	const getSignalR: (typeof import("./hub"))["getSignalR"];
-	const loginSchema: (typeof import("./schemas/authSchema"))["loginSchema"];
-	const piniaPluginPersistedState: (typeof import("pinia-plugin-persistedstate"))["piniaPluginPersistedState"];
-	const ref: (typeof import("vue"))["ref"];
-	const registerSchema: (typeof import("./schemas/authSchema"))["registerSchema"];
-	const sendMessageSchema: (typeof import("./schemas/messageSchema"))["sendMessageSchema"];
-	const setDisplayNameSchema: (typeof import("./schemas/userSchema"))["setDisplayNameSchema"];
-	const signalR: typeof import("@microsoft/signalr");
-	const startConversationSchema: (typeof import("./schemas/conversationSchema"))["startConversationSchema"];
-	const storeToRefs: (typeof import("pinia"))["storeToRefs"];
-	const toTypedSchema: (typeof import("@vee-validate/zod"))["toTypedSchema"];
-	const useConversationStore: (typeof import("./stores/conversationStore"))["useConversationStore"];
-	const useFetch: (typeof import("@vueuse/core"))["useFetch"];
-	const useField: (typeof import("vee-validate"))["useField"];
-	const useForm: (typeof import("vee-validate"))["useForm"];
-	const useMessageStore: (typeof import("./stores/messageStore"))["useMessageStore"];
-	const useRoute: (typeof import("vue-router"))["useRoute"];
-	const useRouter: (typeof import("vue-router"))["useRouter"];
-	const useUserStore: (typeof import("./stores/userStore"))["useUserStore"];
-	const watch: (typeof import("vue"))["watch"];
-	const zod: typeof import("zod");
+  const computed: typeof import('vue')['computed']
+  const connectSignalR: typeof import('./hub')['connectSignalR']
+  const createApp: typeof import('vue')['createApp']
+  const createPinia: typeof import('pinia')['createPinia']
+  const createRouter: typeof import('vue-router')['createRouter']
+  const createWebHistory: typeof import('vue-router')['createWebHistory']
+  const defineStore: typeof import('pinia')['defineStore']
+  const disconnectSignalR: typeof import('./hub')['disconnectSignalR']
+  const getSignalR: typeof import('./hub')['getSignalR']
+  const loginSchema: typeof import('./schemas/authSchema')['loginSchema']
+  const ref: typeof import('vue')['ref']
+  const registerSchema: typeof import('./schemas/authSchema')['registerSchema']
+  const sendMessageSchema: typeof import('./schemas/messageSchema')['sendMessageSchema']
+  const setDisplayNameSchema: typeof import('./schemas/userSchema')['setDisplayNameSchema']
+  const signalR: typeof import("@microsoft/signalr")
+  const startConversationSchema: typeof import('./schemas/conversationSchema')['startConversationSchema']
+  const storeToRefs: typeof import('pinia')['storeToRefs']
+  const toTypedSchema: typeof import('@vee-validate/zod')['toTypedSchema']
+  const useConversationStore: typeof import('./stores/conversationStore')['useConversationStore']
+  const useFetch: typeof import('@vueuse/core')['useFetch']
+  const useField: typeof import('vee-validate')['useField']
+  const useForm: typeof import('vee-validate')['useForm']
+  const useMessageStore: typeof import('./stores/messageStore')['useMessageStore']
+  const useRoute: typeof import('vue-router')['useRoute']
+  const useRouter: typeof import('vue-router')['useRouter']
+  const useUserStore: typeof import('./stores/userStore')['useUserStore']
+  const watch: typeof import('vue')['watch']
+  const zod: typeof import('zod')
 }
 // for type re-export
 declare global {
-	// @ts-ignore
-	export type { GlobalComponents } from "./components.d";
-	import("./components.d");
-	// @ts-ignore
-	export type {
-		Conversation,
-		ConversationType,
-		ConversationMember,
-		User,
-		Message
-	} from "./types";
-	import("./types");
+  // @ts-ignore
+  export type { GlobalComponents } from './components.d'
+  import('./components.d')
+  // @ts-ignore
+  export type { Conversation, ConversationType, ConversationMember, User, Message } from './types'
+  import('./types')
 }

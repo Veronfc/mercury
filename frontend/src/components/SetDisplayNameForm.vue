@@ -57,7 +57,6 @@
 			</label>
 			<button>Save</button>
 		</form>
-		<!-- TODO use this for all error, success and progress messages -->
 		<TransitionGroup name="toast" tag="div">
 			<span v-if="successMessage" class="toast success">{{
 				successMessage
@@ -72,29 +71,4 @@
 
 <style scoped>
 	@reference "../style.css";
-
-	/* TODO use these styles for all error, success and progress messages */
-	/* TODO set globally */
-	.toast {
-		@apply border-2 absolute top-4 right-4 p-2 rounded duration-300;
-	}
-
-	.success {
-		@apply border-green-500;
-	}
-
-	.error {
-		@apply border-red-500;
-	}
-
-	.toast-enter-active,
-	.toast-leave-active {
-		transition: all 0.75s ease;
-	}
-	.toast-enter-from,
-	.toast-leave-to {
-		opacity: 0;
-		transform: translateX(1rem);
-	}
-	/*  */
 </style>
