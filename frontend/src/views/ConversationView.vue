@@ -1,9 +1,4 @@
 <script setup lang="ts">
-	import { storeToRefs } from "pinia";
-	import ConversationList from "../components/ConversationList.vue";
-	import MessageList from "../components/MessageList.vue";
-	import { useUserStore } from "../stores/userStore";
-	import { useRouter } from "vue-router";
 	const { isLoggedIn } = storeToRefs(useUserStore());
 	const router = useRouter();
 

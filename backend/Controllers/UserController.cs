@@ -1,5 +1,3 @@
-using System.Data.Common;
-using System.Security.Claims;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

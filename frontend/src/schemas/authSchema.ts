@@ -1,6 +1,3 @@
-import * as zod from "zod";
-import { toTypedSchema } from "@vee-validate/zod";
-
 const registerSchema = toTypedSchema(
 	zod.object({
 		email: zod.string().email("Invalid email address"),

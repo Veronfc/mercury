@@ -1,9 +1,4 @@
 import * as signalR from "@microsoft/signalr";
-import type { Message } from "../types";
-import { useMessageStore } from "../stores/messageStore";
-import { useConversationStore } from "../stores/conversationStore";
-import { storeToRefs } from "pinia";
-import { useUserStore } from "../stores/userStore";
 
 let connection: signalR.HubConnection | null = null;
 
@@ -45,4 +40,4 @@ const disconnectSignalR = async () => {
 	}
 };
 
-export { connectSignalR, getSignalR, disconnectSignalR };
+export { connectSignalR, disconnectSignalR, getSignalR };

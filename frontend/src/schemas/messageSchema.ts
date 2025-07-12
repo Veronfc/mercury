@@ -1,6 +1,3 @@
-import { toTypedSchema } from "@vee-validate/zod";
-import * as zod from "zod";
-
 const sendMessageSchema = toTypedSchema(
 	zod.object({
 		content: zod

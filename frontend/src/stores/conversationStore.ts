@@ -1,8 +1,3 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import type { Conversation } from "../types";
-import { useFetch } from "@vueuse/core";
-
 export const useConversationStore = defineStore(
 	"conversations",
 	() => {

@@ -20,6 +20,7 @@ type User = {
 	email: string;
 	userName: string;
 	displayName: string;
+	lastActive: string;
 };
 
 type Message = {

@@ -1,16 +1,9 @@
-import { createApp, nextTick } from "vue";
 import "./style.css";
 import App from "./App.vue";
 import NotFoundView from "./views/NotFoundView.vue";
 import HomeView from "./views/HomeView.vue";
 import AuthView from "./views/AuthView.vue";
 import ConversationView from "./views/ConversationView.vue";
-import { createRouter, createWebHistory } from "vue-router";
-import { createPinia, storeToRefs } from "pinia";
-import piniaPluginPersistedState from "pinia-plugin-persistedstate";
-import { useUserStore } from "./stores/userStore";
-import { connectSignalR } from "./lib/hub";
-import { useConversationStore } from "./stores/conversationStore";
 import UserView from "./views/UserView.vue";
 
 const routes = [

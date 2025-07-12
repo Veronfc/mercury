@@ -82,7 +82,8 @@ namespace backend.Controllers
             m.User.Id,
             m.User.Email,
             m.User.UserName,
-            m.User.DisplayName
+            m.User.DisplayName,
+            m.User.LastActive
           )
         ))]
       );
@@ -122,7 +123,8 @@ namespace backend.Controllers
             m.User.Id,
             m.User.Email,
             m.User.UserName,
-            m.User.DisplayName
+            m.User.DisplayName,
+            m.User.LastActive
           )
         ))]
       ))];

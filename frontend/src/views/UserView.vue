@@ -1,11 +1,8 @@
-<script setup lang="ts">
-import SetDisplayNameForm from '../components/SetDisplayNameForm.vue';
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
 	<div>User view</div>
-  <SetDisplayNameForm />
+	<SetDisplayNameForm />
 </template>
 
 <style scoped></style>

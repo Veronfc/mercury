@@ -1,13 +1,12 @@
 <script setup lang="ts">
-	import { useFetch } from "@vueuse/core";
-	import { useUserStore } from "../stores/userStore";
-	import { useRouter } from "vue-router";
-	import { storeToRefs } from "pinia";
-
 	const router = useRouter();
 	const userStore = useUserStore();
 	const { setInfo } = userStore;
 	const { isLoggedIn, userInfo } = storeToRefs(userStore);
+
+	if (isLoggedIn.value) {
+		router.replace({ name: "conversations" });
+	}
 
 	const logOut = async () => {
 		await useFetch("api/user/logout", {
@@ -15,6 +14,7 @@
 		}).get();
 
 		await setInfo();
+		await disconnectSignalR();
 		router.go(0);
 	};
 </script>

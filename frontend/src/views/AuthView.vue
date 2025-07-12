@@ -1,9 +1,4 @@
 <script setup lang="ts">
-	import LoginForm from "../components/LoginForm.vue";
-	import RegisterForm from "../components/RegisterForm.vue";
-	import { useRoute, useRouter } from "vue-router";
-	import { useUserStore } from "../stores/userStore";
-
 	const userStore = useUserStore();
 	const router = useRouter();
 

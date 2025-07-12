@@ -20,7 +20,7 @@ namespace backend.Models
 
 namespace backend.Models
 {
-  public record UserDto(string Id, string Email, string UserName, string DisplayName);
+  public record UserDto(string Id, string Email, string UserName, string DisplayName, DateTime LastActive);
 }
 
 namespace backend.Models

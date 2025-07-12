@@ -1,18 +1,14 @@
 <script setup lang="ts">
-	import { useFetch } from "@vueuse/core";
-	import { useField, useForm } from "vee-validate";
-	import { ref } from "vue";
-	import { setDisplayNameSchema } from "../schemas/userSchema";
-	import { useUserStore } from "../stores/userStore";
-	import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
-
-	const { userInfo } = storeToRefs(useUserStore())
+	const { userInfo } = storeToRefs(useUserStore());
 
 	const { handleSubmit, errors } = useForm({
 		validationSchema: setDisplayNameSchema
 	});
-	const { value: displayName } = useField("displayName", {}, {initialValue: userInfo.value?.displayName});
+	const { value: displayName } = useField(
+		"displayName",
+		{},
+		{ initialValue: userInfo.value?.displayName }
+	);
 
 	const { isFetching, statusCode, response, execute } = useFetch(
 		"/api/user/displayname",
@@ -76,7 +72,6 @@ import { storeToRefs } from "pinia";
 
 <style scoped>
 	@reference "../style.css";
-
 
 	/* TODO use these styles for all error, success and progress messages */
 	/* TODO set globally */

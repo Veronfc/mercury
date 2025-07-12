@@ -1,14 +1,5 @@
 <script setup lang="ts">
-	import { computed, ref, watch } from "vue";
-	import { useRoute } from "vue-router";
-	import { storeToRefs } from "pinia";
 	import { Icon } from "@iconify/vue";
-	import { useMessageStore } from "../stores/messageStore";
-	import { useConversationStore } from "../stores/conversationStore";
-	import { getSignalR } from "../lib/hub";
-	import { useUserStore } from "../stores/userStore";
-	import { useField, useForm } from "vee-validate";
-	import { sendMessageSchema } from "../schemas/messageSchema";
 
 	const route = useRoute();
 	const { getConversation } = useConversationStore();
@@ -98,13 +89,14 @@
 		</div>
 		<div class="message-submission" v-if="isSubmitting">Sending...</div>
 	</div>
+	<div v-else class="message-list"></div>
 </template>
 
 <style scoped>
 	@reference "../style.css";
 
 	.message-list {
-		@apply flex flex-col h-svh w-full p-4 gap-4 bg-white relative;
+		@apply flex flex-col h-svh w-full p-4 gap-4 bg-main relative;
 
 		.messages {
 			@apply flex flex-col-reverse gap-2 items-start w-full h-full overflow-y-scroll;

@@ -1,11 +1,4 @@
 <script setup lang="ts">
-	import { useForm, useField } from "vee-validate";
-	import { loginSchema } from "../schemas/authSchema";
-	import { useFetch } from "@vueuse/core";
-	import { useRouter } from "vue-router";
-	import { useUserStore } from "../stores/userStore";
-	import { connectSignalR } from "../lib/hub";
-
 	const { handleSubmit, errors } = useForm({
 		validationSchema: loginSchema
 	});

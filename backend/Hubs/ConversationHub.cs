@@ -1,14 +1,16 @@
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Hubs
 {
   [Authorize]
-  public class ConversationHub(DatabaseContext db) : Hub
+  public class ConversationHub(DatabaseContext db, UserManager<User> userManager) : Hub
   {
     private readonly DatabaseContext _db = db;
+    private readonly UserManager<User> _userManager = userManager;
 
     public override async Task OnConnectedAsync()
     {
@@ -27,6 +29,25 @@ namespace backend.Hubs
       await base.OnConnectedAsync();
     }
 
+    public override async Task OnDisconnectedAsync(Exception? ex)
+    {
+      if (Context.UserIdentifier is not string userId)
+      {
+        return;
+      }
+
+      if (await _userManager.FindByIdAsync(userId) is not User user)
+      {
+        return;
+      }
+
+      user.LastActive = DateTime.UtcNow;
+      await _userManager.UpdateAsync(user);
+
+      await base.OnDisconnectedAsync(ex);
+    }
+
+    //TODO add a userId/connectionId mapping to automatically add other users to a new conversation group
     public async Task JoinConversation(Guid conversationId)
     {
       await Groups.AddToGroupAsync(Context.ConnectionId, conversationId.ToString());

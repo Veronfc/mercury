@@ -1,6 +1,3 @@
-import { toTypedSchema } from "@vee-validate/zod";
-import * as zod from "zod";
-
 const setDisplayNameSchema = toTypedSchema(
 	zod.object({
 		displayName: zod
