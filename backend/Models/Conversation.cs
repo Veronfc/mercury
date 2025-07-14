@@ -19,30 +19,14 @@ namespace backend.Models
     public ICollection<ConversationMember> Members { get; set; } = [];
     public ICollection<Message> Messages { get; } = [];
   }
-}
 
-namespace backend.Models
-{
   public enum ConversationType
   {
     Direct,
     Group
   }
-}
 
-namespace backend.Models
-{
-  public record class CreateDirectConversationDto
-  {
-    [Required]
-    public string UserId { get; init; }
-
-    //[EmailAddress]
-    //public string? UserEmail { get; init; }
-  }
-}
-
-namespace backend.Models
-{
   public record ConversationDto(Guid Id, ConversationType Type, string? Name, DateTime? LastMessageSentAt, string? LastMessageSnippet, string? LastMessageSenderId, List<ConversationMemberDto> Members);
+  public record NewDirectConversationDto(string UserId);
+  public record NewGroupConversationDto(string Name, List<string> UserIds);
 }

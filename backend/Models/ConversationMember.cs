@@ -12,12 +12,9 @@ namespace backend.Models
     //public Guid? LastReadMessageId { get; set; }
     //public Message LastReadMessage { get; set; }
     public bool? IsAdmin { get; set; }
-    public bool? IsMuted { get; set; }
+    //public bool? IsMuted { get; set; }
 
   }
-}
 
-namespace backend.Models
-{
   public record ConversationMemberDto (string UserId, UserDto User);
 }

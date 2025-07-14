@@ -10,20 +10,11 @@ namespace backend.Models
     public string? AvatarUrl { get; set; }
     public DateTime LastActive { get; set; }
     public ICollection<ConversationMember> Conversations { get; } = [];
+    public ICollection<UserFriend> RequestsSent { get; } = [];
+    public ICollection<UserFriend> RequestsReceieved { get; } = [];
   }
-}
 
-namespace backend.Models
-{
-  public record UserInfoResDto(string Email, string DisplayName, string Id);
-}
+  public record UserDto(string Id, string Email, string UserName, string DisplayName, string AvatarUrl, DateTime LastActive);
 
-namespace backend.Models
-{
-  public record UserDto(string Id, string Email, string UserName, string DisplayName, DateTime LastActive);
-}
-
-namespace backend.Models
-{
   public record SetDisplayNameDto(string DisplayName);
 }

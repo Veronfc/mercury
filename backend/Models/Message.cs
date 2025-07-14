@@ -12,9 +12,6 @@ namespace backend.Models
     public string Content { get; set; }
     public DateTime SentAt { get; set; }
   }
-}
 
-namespace backend.Models
-{
   public record MessageDto(Guid Id, string ConversationId, string SenderId, string Content, DateTime SentAt);
 }

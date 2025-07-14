@@ -19,9 +19,9 @@ namespace backend.Controllers
 
     [HttpPost("direct")]
     [Authorize]
-    public async Task<ActionResult<ConversationDto>> CreateDirectConversation([FromBody] CreateDirectConversationDto body)
+    public async Task<ActionResult<ConversationDto>> NewDirectConversation([FromBody] NewDirectConversationDto body)
     {
-      //TODO code to get other user by email
+      //TODO code to get other user by email/display name
       if (!ModelState.IsValid)
       {
         return BadRequest(ModelState);
@@ -83,6 +83,86 @@ namespace backend.Controllers
             m.User.Email,
             m.User.UserName,
             m.User.DisplayName,
+            m.User.AvatarUrl,
+            m.User.LastActive
+          )
+        ))]
+      );
+
+      return Created("", conversationDto);
+    }
+
+    [HttpPost("group")]
+    [Authorize]
+    public async Task<ActionResult<ConversationDto>> NewGroupConversation([FromBody] NewGroupConversationDto body)
+    {
+      //TODO code to get other user by email/display name
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      if (User.FindFirstValue(ClaimTypes.NameIdentifier) is not string userId)
+      {
+        return BadRequest("ID could not be determined");
+      }
+
+      if (body.UserIds.Contains(userId))
+      {
+        return BadRequest("You can not include yourself in a group conversation twice");
+      }
+
+      foreach (string id in body.UserIds)
+      {
+        if (await _userManager.FindByIdAsync(id) is not User existingUser)
+        {
+          return NotFound($"User with ID: {id} does not exist");
+        }
+      }
+
+      Conversation conversation = new()
+      {
+        Id = Guid.NewGuid(),
+        Type = ConversationType.Group,
+        Name = body.Name,
+        CreatedAt = DateTime.UtcNow,
+        CreatorId = userId,
+        Members = [.. body.UserIds.Select(id => new ConversationMember()
+        {
+          UserId = id,
+          JoinedAt = DateTime.UtcNow
+        })]
+      };
+
+      conversation.Members.Add(new()
+      {
+        UserId = userId,
+        JoinedAt = DateTime.UtcNow
+      });
+
+      await _db.Conversations.AddAsync(conversation);
+      await _db.SaveChangesAsync();
+
+      Conversation createdConversation = await _db.Conversations.Include(c => c.Members).ThenInclude(cm => cm.User).SingleAsync(c => c.Id == conversation.Id);
+
+      ConversationDto conversationDto = new
+      (
+        createdConversation.Id,
+        createdConversation.Type,
+        createdConversation.Name,
+        createdConversation.LastMessageSentAt,
+        createdConversation.LastMessageSnippet,
+        createdConversation.LastMessageSenderId,
+        [.. createdConversation.Members.Select(m => new ConversationMemberDto
+        (
+          m.UserId,
+          new UserDto
+          (
+            m.User.Id,
+            m.User.Email,
+            m.User.UserName,
+            m.User.DisplayName,
+            m.User.AvatarUrl,
             m.User.LastActive
           )
         ))]
@@ -124,6 +204,7 @@ namespace backend.Controllers
             m.User.Email,
             m.User.UserName,
             m.User.DisplayName,
+            m.User.AvatarUrl,
             m.User.LastActive
           )
         ))]

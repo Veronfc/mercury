@@ -1,3 +1,5 @@
+using System.Net.Sockets;
+using System.Security.Claims;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -9,21 +11,30 @@ namespace backend.Controllers
 {
   [ApiController]
   [Route("[controller]")]
-  public class UserController(SignInManager<User> signInManager, UserManager<User> userManager) : ControllerBase
+  public class UserController(SignInManager<User> signInManager, UserManager<User> userManager, DatabaseContext db) : ControllerBase
   {
     private readonly UserManager<User> _userManager = userManager;
     private readonly SignInManager<User> _signInManager = signInManager;
+    private readonly DatabaseContext _db = db;
 
-    [HttpGet("info")]
+    [HttpGet()]
     [Authorize]
-    public async Task<ActionResult<UserInfoResDto>> Info()
+    public async Task<ActionResult<UserDto>> GetInfo()
     {
       if (await _userManager.GetUserAsync(User) is not User user)
       {
         return BadRequest("User profile not found");
       }
 
-      return Ok(new UserInfoResDto(user.Email, user.DisplayName, user.Id));
+      return Ok(new UserDto
+      (
+        user.Id,
+        user.Email,
+        user.UserName,
+        user.DisplayName,
+        user.AvatarUrl,
+        user.LastActive
+      ));
     }
 
     [HttpGet("logout")]

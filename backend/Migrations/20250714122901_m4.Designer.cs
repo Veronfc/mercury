@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250714122901_m4")]
+    partial class m4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,9 +202,6 @@ namespace backend.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
-                    b.Property<bool?>("IsAdmin")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -317,30 +317,6 @@ namespace backend.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("backend.Models.UserFriend", b =>
-                {
-                    b.Property<string>("RequesterId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ReceiverId")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("RequestAcceptedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("RequestSentAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.HasKey("RequesterId", "ReceiverId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.ToTable("UserFriends");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -441,25 +417,6 @@ namespace backend.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("backend.Models.UserFriend", b =>
-                {
-                    b.HasOne("backend.Models.User", "Receiver")
-                        .WithMany("RequestsReceieved")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.User", "Requester")
-                        .WithMany("RequestsSent")
-                        .HasForeignKey("RequesterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Requester");
-                });
-
             modelBuilder.Entity("backend.Models.Conversation", b =>
                 {
                     b.Navigation("Members");
@@ -470,10 +427,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Conversations");
-
-                    b.Navigation("RequestsReceieved");
-
-                    b.Navigation("RequestsSent");
                 });
 #pragma warning restore 612, 618
         }

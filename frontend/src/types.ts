@@ -20,6 +20,7 @@ type User = {
 	email: string;
 	userName: string;
 	displayName: string;
+	avatarUrl: string;
 	lastActive: string;
 };
 
@@ -31,10 +32,36 @@ type Message = {
 	sentAt: string;
 };
 
+type Friend = {
+	friendId: string;
+	friend: User;
+	friendSince: string; //DateTime 
+}
+
+type FriendRequestSent = {
+	receiverId: string;
+	receiver: User;
+	sentAt: string; //DateTime
+	status: FriendRequestStatus;
+}
+
+type FriendRequestReceived = {
+	requesterId: string;
+	requester: User;
+	sentAt: string; //DateTime
+	status: FriendRequestStatus;
+}
+
+type FriendRequestStatus = "Pending" | "Rejected" | "Accepted";
+
 export type {
 	Conversation,
 	ConversationType,
 	ConversationMember,
 	User,
-	Message
+	Message,
+	Friend,
+	FriendRequestSent,
+	FriendRequestReceived,
+	FriendRequestStatus
 };
