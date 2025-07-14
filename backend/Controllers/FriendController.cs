@@ -103,7 +103,7 @@ namespace backend.Controllers
       return Ok(requestsSentDto);
     }
 
-    [HttpPost("new")]
+    [HttpPost("request")]
     [Authorize]
     public async Task<IActionResult> NewRequest([FromBody] RequestDto body)
     {

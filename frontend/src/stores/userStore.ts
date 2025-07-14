@@ -5,7 +5,7 @@ export const useUserStore = defineStore(
 		const userInfo = ref<User>();
 
 		const setInfo = async () => {
-			const { statusCode, data } = await useFetch("/api/user/info", {
+			const { statusCode, data } = await useFetch("/api/user", {
 				credentials: "include"
 			})
 				.get()

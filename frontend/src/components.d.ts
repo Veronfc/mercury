@@ -11,6 +11,7 @@ declare module 'vue' {
     AuthView: typeof import('./views/AuthView.vue')['default']
     ConversationList: typeof import('./components/ConversationList.vue')['default']
     ConversationView: typeof import('./views/ConversationView.vue')['default']
+    FriendList: typeof import('./components/FriendList.vue')['default']
     HomeView: typeof import('./views/HomeView.vue')['default']
     LoginForm: typeof import('./components/LoginForm.vue')['default']
     MessageList: typeof import('./components/MessageList.vue')['default']

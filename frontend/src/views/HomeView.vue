@@ -4,9 +4,9 @@
 	const { setInfo } = userStore;
 	const { isLoggedIn, userInfo } = storeToRefs(userStore);
 
-	if (isLoggedIn.value) {
-		router.replace({ name: "conversations" });
-	}
+	// if (isLoggedIn.value) {
+	// 	router.replace({ name: "conversations" });
+	// }
 
 	const logOut = async () => {
 		await useFetch("api/user/logout", {
@@ -28,6 +28,7 @@
 	<RouterLink :to="{ name: 'auth', query: { mode: 'login' } }">Auth</RouterLink>
 	<br />
 	<RouterLink :to="{ name: 'conversations' }">Conversations</RouterLink>
+	<hr>
 </template>
 
 <style scoped></style>

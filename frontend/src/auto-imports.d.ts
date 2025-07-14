@@ -16,6 +16,7 @@ declare global {
   const disconnectSignalR: typeof import('./hub')['disconnectSignalR']
   const getSignalR: typeof import('./hub')['getSignalR']
   const loginSchema: typeof import('./schemas/authSchema')['loginSchema']
+  const onBeforeMount: typeof import('vue')['onBeforeMount']
   const ref: typeof import('vue')['ref']
   const registerSchema: typeof import('./schemas/authSchema')['registerSchema']
   const sendMessageSchema: typeof import('./schemas/messageSchema')['sendMessageSchema']
@@ -28,6 +29,7 @@ declare global {
   const useFetch: typeof import('@vueuse/core')['useFetch']
   const useField: typeof import('vee-validate')['useField']
   const useForm: typeof import('vee-validate')['useForm']
+  const useFriendStore: typeof import('./stores/friendStore')['useFriendStore']
   const useMessageStore: typeof import('./stores/messageStore')['useMessageStore']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
@@ -41,6 +43,6 @@ declare global {
   export type { GlobalComponents } from './components.d'
   import('./components.d')
   // @ts-ignore
-  export type { Conversation, ConversationType, ConversationMember, User, Message } from './types'
+  export type { Conversation, ConversationType, ConversationMember, User, Message, Friend, FriendRequestSent, FriendRequestReceived, FriendRequestStatus } from './types'
   import('./types')
 }

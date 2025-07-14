@@ -15,7 +15,7 @@ export default defineConfig({
 			dirs: ["src", "src/stores", "src/schemas"],
 			imports: [
 				{
-					vue: ["ref", "computed", "watch", "createApp"]
+					vue: ["ref", "computed", "watch", "createApp", "onBeforeMount"]
 				},
 				{
 					"vue-router": [
